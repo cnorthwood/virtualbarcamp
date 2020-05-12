@@ -26,3 +26,5 @@ Dev Quick Start
    dependencies installed (for your IDE, etc).
 3. Run `docker-compose up`
 4. http://localhost:8000
+5. `docker exec -it virtualbarcamp_app_1 poetry run ./manage.py createsuperuser`
+   to create yourself a user

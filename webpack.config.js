@@ -9,6 +9,7 @@ module.exports = {
   mode: process.env.NODE_ENV || "development",
   entry: {
     browser: "./virtualbarcamp/browser/index.ts",
+    accounts: "./virtualbarcamp/accounts/browser/index.ts",
   },
   output: {
     path: path.resolve(__dirname, "build"),

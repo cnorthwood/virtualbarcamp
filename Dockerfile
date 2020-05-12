@@ -26,10 +26,10 @@ FROM fedora:32
 
 RUN dnf upgrade -y && \
         dnf install -y uwsgi uwsgi-plugin-python3 nginx python3-pip
-COPY --from=ui-builder /app/requirements.txt /app/manage.py /app/
-COPY --from=ui-builder /app/virtualbarcamp/ /app/virtualbarcamp/
-COPY --from=ui-builder /app/build/ /app/build/
-COPY --from=ui-builder /app/nginx.conf /etc/nginx/nginx.conf
+COPY --from=builder /app/requirements.txt /app/manage.py /app/
+COPY --from=builder /app/virtualbarcamp/ /app/virtualbarcamp/
+COPY --from=builder /app/build/ /app/build/
+COPY --from=builder /app/nginx.conf /etc/nginx/nginx.conf
 RUN pip install -r /app/requirements.txt
 RUN mkdir -p /app/sock && chown nginx:nginx /app/sock
 

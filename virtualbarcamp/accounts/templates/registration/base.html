@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load static %}
+{% block body %}
+    <header class="navbar is-primary">
+        <div class="container">
+            <div class="navbar-brand">
+                <div class="navbar-item">
+                    <h1 class="title is-size-1"><img src="{% static "accounts/barcamplogo.png" %}" alt="BarCamp Manchester" style="max-height: 6rem"></h1>
+                </div>
+            </div>
+        </div>
+    </header>
+    <main class="section">
+        <div class="container">
+            <div class="columns is-centered">
+                <div class="column is-one-third">
+                    <div class="box">
+                        {% block main %}{% endblock %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+{% endblock %}

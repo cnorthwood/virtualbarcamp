@@ -1,0 +1,32 @@
+{% extends "registration/base.html" %}
+
+{% block main %}
+    <h2 class="title">Sign In</h2>
+    <form method="POST">
+        {% csrf_token %}
+        {% for error in form.non_field_errors %}
+            <div class="notification is-danger">{{ error }}</div>
+        {% endfor %}
+        {% include "form_field.html" with label="Username" field=form.username %}
+        {% include "form_field.html" with label="Password" field=form.password %}
+        <div class="field">
+            <div class="control">
+                <div class="buttons">
+                    <button class="button is-success">Sign In</button>
+                    <a href="{% url "password_reset" %}" class="button is-text">Forgot password</a>
+                </div>
+            </div>
+        </div>
+    </form>
+    <div class="field"></div>
+    <div class="field">
+        <div class="message is-info">
+            <div class="message-body">
+                <p>If you do not yet a ticket for BarCamp, you can register with the link below.</p>
+                <div class="control">
+                    <a class="button" href="{% url "register" %}">Register Now</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

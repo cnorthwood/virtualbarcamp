@@ -10,12 +10,15 @@ DEBUG = os.environ.get("DEBUG") == "True"
 ALLOWED_HOSTS = [os.environ["APP_HOST"]] if "APP_HOST" in os.environ else []
 
 INSTALLED_APPS = [
+    "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.postgres",
+    "widget_tweaks",
+    "virtualbarcamp.accounts",
     "virtualbarcamp.home",
 ]
 

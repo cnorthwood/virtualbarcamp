@@ -1,0 +1,84 @@
+{% extends "registration/base.html" %}
+
+{% block main %}
+    <h2 class="title">Register for BarCamp</h2>
+    <form method="POST">
+        {% csrf_token %}
+        {% for error in form.non_field_errors %}
+            <div class="notification is-danger">{{ error }}</div>
+        {% endfor %}
+        {% include "form_field.html" with label="Username" field=form.username %}
+        {% include "form_field.html" with label="Password" field=form.password1 %}
+        {% include "form_field.html" with label="Confirm Password" field=form.password2 %}
+        <div class="field">
+            <div class="control">
+                <div class="content">
+                    <h3>Code Of Conduct</h3>
+                    <p>
+                        BarCamp Manchester is dedicated to providing a harassment-free unconference experience for
+                        everyone, regardless of gender, gender identity and expression, sexual orientation, disability,
+                        physical appearance, body size, race, age or religion. We do not tolerate harassment of
+                        unconference participants in any form. Unconference participants violating these rules may be
+                        sanctioned or expelled from the unconference at the discretion of the BarCamp Manchester
+                        volunteers.
+                    </p>
+                    <p>
+                        Harassment includes, but is not limited to:
+                    </p>
+                    <ul>
+                        <li>
+                            Comments that reinforce social structures of domination related to gender, gender
+                            identity and expression, sexual orientation, disability, physical appearance, body size,
+                            race, age or religion.
+                        </li>
+                        <li>Deliberate intimidation, stalking, or following</li>
+                        <li>Harassing photography or recording</li>
+                        <li>Sustained disruption of talks or other events</li>
+                        <li>Unwelcome sexual attention</li>
+                        <li>Persistent uninvited criticism of a talk or a BarCamp volunteer</li>
+                        <li>Advocating for, or encouraging, any of the above behaviour</li>
+                    </ul>
+                    <h3>Enforcement</h3>
+                    <p>
+                        Participants asked to stop any harassing behavior are expected to comply immediately. Sponsors
+                        are also subject to the anti-harassment policy.
+                    </p>
+                    <p>
+                        If a participant engages in harassing behaviour, event organisers retain the right to take any
+                        actions to keep the event a welcoming environment for all participants. This includes warning
+                        the offender or expulsion from the unconference.
+                    </p>
+                    <p>
+                        Event organisers may take action to redress anything designed to, or with the clear impact of,
+                        disrupting the event or making the environment hostile for any participants.
+                    </p>
+                    <p>
+                        We expect participants to follow these rules at all event venues and event-related social
+                        activities.
+                    </p>
+                    <h3>Reporting</h3>
+                    <p>
+                        If someone makes you or anyone else feel unsafe or unwelcome, please report it as soon as
+                        possible. BarCamp volunteers can be identified within the app and content can be reported
+                        using the "report" functionality.
+                    </p>
+                    <p>
+                        This anti-harassment policy is based on the example policy from the Geek Feminism wiki, created
+                        by the Ada Initiative and other volunteers.
+                    </p>
+                </div>
+                <label class="checkbox">
+                    <input type="checkbox" required>
+                    I agree to the Code of Conduct
+                </label>
+            </div>
+        </div>
+        <div class="field">
+            <div class="control">
+                <div class="buttons">
+                    <button class="button is-success">Register</button>
+                </div>
+            </div>
+        </div>
+    </form>
+{% endblock %}
