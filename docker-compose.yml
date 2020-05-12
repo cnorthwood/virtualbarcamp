@@ -1,0 +1,68 @@
+version: "3.4"
+services:
+  db:
+    image: postgres:11
+    restart: always
+    environment:
+      POSTGRES_DB: virtualbarcamp
+      POSTGRES_USER: virtualbarcamp
+      POSTGRES_PASSWORD: virtualbarcamp
+
+  test_db:
+    image: postgres:11
+    restart: always
+    environment:
+      POSTGRES_DB: virtualbarcamp
+      POSTGRES_USER: virtualbarcamp
+      POSTGRES_PASSWORD: virtualbarcamp
+
+  ui:
+    image: node:12
+    restart: always
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    working_dir: /app
+    command: bash -c 'yarn && yarn dev'
+    environment:
+      TSC_WATCHFILE: UseFsEventsWithFallbackDynamicPolling
+
+  app:
+    build:
+      context: .
+      target: dev-base
+    restart: always
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+      - ui
+    environment: &app_config
+      SECRET_KEY: 's3btzxqij&5ep%bzo^81h)div09@)xf3u_&#6yh86@l(t+m^'
+      DEBUG: "True"
+      DB_HOST: db
+      DB_USER: virtualbarcamp
+      DB_PASSWORD: virtualbarcamp
+      DB_NAME: virtualbarcamp
+      WEBPACK_DEV_SERVER_MANIFEST: "http://ui:3000/build/manifest.json"
+    working_dir: /app
+    command: bash -c 'poetry install --no-root && poetry run ./manage.py migrate && poetry run ./manage.py runserver 0.0.0.0:8000'
+
+  app_test:
+    build:
+      context: .
+      target: dev-base
+    restart: always
+    volumes:
+      - .:/app
+    depends_on:
+      - test_db
+    environment:
+      <<: *app_config
+      DB_HOST: test_db
+    working_dir: /app
+    command: bash -c 'poetry install --no-root && poetry run ptw virtualbarcamp -- --testmon'

@@ -1,0 +1,67 @@
+stages:
+  - prepare
+  - test
+  - build
+
+Build Testing Image:
+  stage: prepare
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+    - docker pull $CI_REGISTRY_IMAGE/dev-base:latest || true
+    - docker build --cache-from $CI_REGISTRY_IMAGE/dev-base:latest --tag $CI_REGISTRY_IMAGE/dev-base:latest --target dev-base .
+    - docker push $CI_REGISTRY_IMAGE/dev-base:latest
+
+Browser Tests:
+  stage: test
+  image:
+    name: node:12
+  before_script:
+    - yarn
+  script:
+    - yarn test
+    - yarn audit --groups dependencies
+  cache:
+    paths:
+      - node_modules/
+
+App Tests:
+  stage: test
+  image:
+    name: $CI_REGISTRY_IMAGE/dev-base:latest
+  services:
+    - postgres:11
+  variables:
+    DEBUG: "True"
+    POSTGRES_DB: virtualbarcamp
+    POSTGRES_USER: virtualbarcamp
+    POSTGRES_PASSWORD: virtualbarcamp
+    DB_HOST: postgres
+    DB_USER: virtualbarcamp
+    DB_PASSWORD: virtualbarcamp
+    DB_NAME: virtualbarcamp
+  before_script:
+    - poetry install
+  script:
+    - poetry run pytest virtualbarcamp
+    - poetry run black --check virtualbarcamp
+
+Build image:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+  script:
+    - docker build
+      --pull --no-cache
+      -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
+      .
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
+  variables:
+    DOCKER_BUILDKIT: "1"
+  only:
+    - master

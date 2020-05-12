@@ -1,0 +1,8 @@
+.pytest_cache
+.testmondata
+*.pyc
+*.pyo
+node_modules/
+*.egg-info/
+build/
+static/

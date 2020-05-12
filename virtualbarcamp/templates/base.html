@@ -1,0 +1,26 @@
+{% load static %}<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block page_title %}{% endblock %}</title>
+    {% for entrypoint, assets in webpack_assets.items %}
+        {% if include_bundle == entrypoint %}
+            {% for asset in assets.css %}
+                <link rel="stylesheet" href="{{ asset.url }}" integrity="{{ asset.integrity }}" crossorigin="anonymous">
+            {% endfor %}
+        {% endif %}
+    {% endfor %}
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+{% block body %}{% endblock %}
+{% for entrypoint, assets in webpack_assets.items %}
+    {% if include_bundle == entrypoint %}
+        {% for asset in assets.js %}
+            <script src="{{ asset.url }}" integrity="{{ asset.integrity }}" crossorigin="anonymous"></script>
+        {% endfor %}
+    {% endif %}
+{% endfor %}
+</body>
+</html>
