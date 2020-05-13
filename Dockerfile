@@ -20,6 +20,7 @@ RUN dnf install -y poetry yarn
 COPY . /app
 WORKDIR /app
 RUN yarn
+RUN yarn build
 RUN poetry export -f requirements.txt -o /app/requirements.txt
 
 FROM fedora:32
