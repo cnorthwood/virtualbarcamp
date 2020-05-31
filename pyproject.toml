@@ -7,9 +7,12 @@ license = "AGPL-3.0-or-later"
 
 [tool.poetry.dependencies]
 python = "^3.8"
+celery = {extras = ["redis"], version = "^4.4.2"}
 channels = "^2.4.0"
 daphne = "^2.5.0"
 django = {extras = ["argon2"], version = "^3.0.6"}
+django-celery-beat = "^2.0.0"
+django-celery-results = "^1.2.1"
 django-csp = "^3.6"
 graphene-django = "^2.10.1"
 graphene-subscriptions = "^1.0.2"

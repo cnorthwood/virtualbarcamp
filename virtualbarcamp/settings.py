@@ -21,6 +21,8 @@ INSTALLED_APPS = [
     "graphene_django",
     "graphene_subscriptions",
     "channels",
+    "django_celery_results",
+    "django_celery_beat",
     "virtualbarcamp.accounts",
     "virtualbarcamp.graphql",
     "virtualbarcamp.home",
@@ -92,11 +94,13 @@ DATABASES = {
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "CONFIG": {
-            "hosts": [(os.environ.get("REDIS_HOST"), int(os.environ.get("REDIS_PORT", "6379")))],
-        },
+        "CONFIG": {"hosts": [(os.environ.get("REDIS_HOST"), 6379)],},
     },
 }
+
+CELERY_RESULT_BACKEND = "django-db"
+CELERY_TASK_TRACK_STARTED = True
+CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL")
 
 PASSWORD_HASHERS = [
     "django.contrib.auth.hashers.Argon2PasswordHasher",

@@ -57,6 +57,7 @@ services:
       DB_PASSWORD: virtualbarcamp
       DB_NAME: virtualbarcamp
       REDIS_HOST: redis
+      CELERY_BROKER_URL: redis://redis
       WEBPACK_DEV_SERVER_MANIFEST: "http://ui:3000/build/manifest.json"
       DISCORD_OAUTH_CLIENT_ID: 716651923847118948
       DISCORD_OAUTH_CLIENT_SECRET: ${DISCORD_OAUTH_CLIENT_SECRET}
@@ -71,10 +72,46 @@ services:
     volumes:
       - .:/app
     depends_on:
+      - test_redis
       - test_db
     environment:
       <<: *app_config
       DB_HOST: test_db
       REDIS_HOST: test_redis
+      CELERY_BROKER_URL: redis://test_redis
     working_dir: /app
     command: bash -c 'poetry install --no-root && poetry run ptw virtualbarcamp -- --testmon'
+
+  queueworker:
+    build:
+      context: .
+      target: dev-base
+    restart: unless-stopped
+    volumes:
+      - .:/app
+    depends_on:
+      - redis
+      - db
+    environment:
+      <<: *app_config
+      DEBUG: "False"
+    working_dir: /app
+    command: bash -c 'poetry install --no-root && poetry run celery -A virtualbarcamp worker -l info'
+
+  queuebeat:
+    build:
+      context: .
+      target: dev-base
+    restart: unless-stopped
+    volumes:
+      - .:/app
+    depends_on:
+      - redis
+      - db
+    environment:
+      <<: *app_config
+      DEBUG: "False"
+    working_dir: /app
+    command: bash -c 'poetry install --no-root && poetry run celery -A virtualbarcamp beat -l info -S django --pidfile=/tmp/celerybeat.pid'
+    logging:
+      driver: "none"
