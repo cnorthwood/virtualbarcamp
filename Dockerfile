@@ -26,7 +26,7 @@ RUN poetry export -f requirements.txt -o /app/requirements.txt
 FROM fedora:32
 
 RUN dnf upgrade -y && \
-        dnf install -y nginx python3-pip gcc
+        dnf install -y nginx python3-pip gcc python3-devel
 COPY --from=builder /app/requirements.txt /app/manage.py /app/
 COPY --from=builder /app/virtualbarcamp/ /app/virtualbarcamp/
 COPY --from=builder /app/build/ /app/build/
