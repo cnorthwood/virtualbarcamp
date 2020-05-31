@@ -7,4 +7,5 @@ urlpatterns = [
     path("", home_view, name="home"),
     path("admin/", admin.site.urls),
     path("accounts/", include("virtualbarcamp.accounts.urls")),
+    path("accounts/social-auth/", include("social_django.urls", namespace="social")),
 ]

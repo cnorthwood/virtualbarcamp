@@ -49,6 +49,8 @@ services:
       DB_PASSWORD: virtualbarcamp
       DB_NAME: virtualbarcamp
       WEBPACK_DEV_SERVER_MANIFEST: "http://ui:3000/build/manifest.json"
+      DISCORD_OAUTH_CLIENT_ID: 716651923847118948
+      DISCORD_OAUTH_CLIENT_SECRET: ${DISCORD_OAUTH_CLIENT_SECRET}
     working_dir: /app
     command: bash -c 'poetry install --no-root && poetry run ./manage.py migrate && poetry run ./manage.py runserver 0.0.0.0:8000'
 

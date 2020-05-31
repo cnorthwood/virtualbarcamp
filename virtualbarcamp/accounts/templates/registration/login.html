@@ -1,32 +1,14 @@
 {% extends "registration/base.html" %}
 
 {% block main %}
-    <h2 class="title">Sign In</h2>
-    <form method="POST">
-        {% csrf_token %}
-        {% for error in form.non_field_errors %}
-            <div class="notification is-danger">{{ error }}</div>
-        {% endfor %}
-        {% include "form_field.html" with label="Username" field=form.username %}
-        {% include "form_field.html" with label="Password" field=form.password %}
-        <div class="field">
-            <div class="control">
-                <div class="buttons">
-                    <button class="button is-success">Sign In</button>
-                    <a href="{% url "password_reset" %}" class="button is-text">Forgot password</a>
-                </div>
-            </div>
-        </div>
-    </form>
-    <div class="field"></div>
-    <div class="field">
-        <div class="message is-info">
-            <div class="message-body">
-                <p>If you do not yet a ticket for BarCamp, you can register with the link below.</p>
-                <div class="control">
-                    <a class="button" href="{% url "register" %}">Register Now</a>
-                </div>
-            </div>
-        </div>
+    <div class="content">
+        <h2 class="subtitle">Welcome to BarCamp Manchester 10</h2>
+        <p>This year, BarCamp Manchester is being hosted on Discord!</p>
+        <p>
+            If you do not have a Discord account, please go to <a href="https://www.discord.com/">Discord.com</a> to
+            sign up and download the app. Then you can return here and sign in using your account. If you already have
+            an account, click below to sign in!
+        </p>
+        <p><a href="{% url "social:begin" "discord" %}" class="button is-primary is-large is-fullwidth">Sign In With Discord</a></p>
     </div>
 {% endblock %}

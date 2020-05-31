@@ -17,6 +17,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.postgres",
+    "social_django",
     "widget_tweaks",
     "virtualbarcamp.accounts",
     "virtualbarcamp.home",
@@ -94,6 +95,17 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
+
+AUTHENTICATION_BACKENDS = [
+    "social_core.backends.discord.DiscordOAuth2"
+]
+
+SOCIAL_AUTH_DISCORD_KEY = os.environ.get("DISCORD_OAUTH_CLIENT_ID")
+SOCIAL_AUTH_DISCORD_SECRET = os.environ.get("DISCORD_OAUTH_CLIENT_SECRET")
+
+LOGIN_REDIRECT_URL = "home"
+
+SOCIAL_AUTH_POSTGRES_JSONFIELD = True
 
 LANGUAGE_CODE = "en-gb"
 TIME_ZONE = "Europe/London"

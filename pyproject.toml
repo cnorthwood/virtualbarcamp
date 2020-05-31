@@ -9,9 +9,10 @@ license = "AGPL-3.0-or-later"
 python = "^3.8"
 django = {extras = ["argon2"], version = "^3.0.6"}
 django-csp = "^3.6"
+django-widget-tweaks = "^1.4.8"
 psycopg2-binary = "^2.8.5"
 requests = "^2.23.0"
-django-widget-tweaks = "^1.4.8"
+social-auth-app-django = "^3.4.0"
 
 [tool.poetry.dev-dependencies]
 black = "^19.10b0"
