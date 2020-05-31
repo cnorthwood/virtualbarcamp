@@ -1,13 +1,11 @@
 from graphene import Schema, ObjectType, Boolean
 from rx import Observable
 
+from virtualbarcamp.graphql.queries.global_settings import GlobalSettingsQuery
 
-class Query(ObjectType):
-    hello_world = Boolean()
 
-    @staticmethod
-    def resolve_hello_world(parent, info):
-        return True
+class Query(GlobalSettingsQuery, ObjectType):
+    pass
 
 
 class Mutation(ObjectType):
