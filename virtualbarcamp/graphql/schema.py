@@ -1,27 +1,15 @@
-from graphene import Schema, ObjectType, Boolean
-from rx import Observable
+from graphene import Schema, ObjectType
 
 from virtualbarcamp.graphql.queries.global_settings import GlobalSettingsQuery
+from virtualbarcamp.graphql.subscriptions.global_settings import GlobalSettingsSubscription
 
 
 class Query(GlobalSettingsQuery, ObjectType):
     pass
 
 
-class Mutation(ObjectType):
-    hello_world = Boolean()
-
-    @staticmethod
-    def resolve_hello_world(parent, info):
-        return True
+class Subscription(GlobalSettingsSubscription, ObjectType):
+    pass
 
 
-class Subscription(ObjectType):
-    hello_world = Boolean()
-
-    @staticmethod
-    def resolve_hello_world(parent, info):
-        return Observable.interval(3000).map(lambda i: True)
-
-
-schema = Schema(query=Query, mutation=Mutation, subscription=Subscription)
+schema = Schema(query=Query, mutation=None, subscription=Subscription)
