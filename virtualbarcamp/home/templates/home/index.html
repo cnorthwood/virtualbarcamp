@@ -3,9 +3,16 @@
 {% block page_title %}Virtual BarCamp{% endblock %}
 
 {% block body %}
-<main class="section">
+<noscript>
+    <div class="section">
+        <div class="container">
+            <p>You require JavaScript to load this app.</p>
+        </div>
+    </div>
+</noscript>
+<main id="root" class="section">
     <div class="container">
-        <p>Hello world</p>
+        <p>Loading, please wait...</p>
     </div>
 </main>
 {% endblock %}

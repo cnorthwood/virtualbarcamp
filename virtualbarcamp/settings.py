@@ -18,8 +18,11 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django.contrib.postgres",
     "social_django",
-    "widget_tweaks",
+    "graphene_django",
+    "graphene_subscriptions",
+    "channels",
     "virtualbarcamp.accounts",
+    "virtualbarcamp.graphql",
     "virtualbarcamp.home",
 ]
 
@@ -36,6 +39,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = "virtualbarcamp.urls"
+GRAPHENE = {"SCHEMA": "virtualbarcamp.graphql.schema.schema"}
 
 TEMPLATES = [
     {
@@ -54,7 +58,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "virtualbarcamp.wsgi.application"
+ASGI_APPLICATION = "virtualbarcamp.routing.application"
 
 LOGGING = {
     "version": 1,
@@ -85,6 +89,15 @@ DATABASES = {
     }
 }
 
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [(os.environ.get("REDIS_HOST"), int(os.environ.get("REDIS_PORT", "6379")))],
+        },
+    },
+}
+
 PASSWORD_HASHERS = [
     "django.contrib.auth.hashers.Argon2PasswordHasher",
 ]
@@ -96,9 +109,7 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
-AUTHENTICATION_BACKENDS = [
-    "social_core.backends.discord.DiscordOAuth2"
-]
+AUTHENTICATION_BACKENDS = ["social_core.backends.discord.DiscordOAuth2"]
 
 SOCIAL_AUTH_DISCORD_KEY = os.environ.get("DISCORD_OAUTH_CLIENT_ID")
 SOCIAL_AUTH_DISCORD_SECRET = os.environ.get("DISCORD_OAUTH_CLIENT_SECRET")
@@ -117,6 +128,7 @@ STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "build"),
+    os.path.join(BASE_DIR, "virtualbarcamp", "static"),
 ]
 STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.FileSystemFinder",

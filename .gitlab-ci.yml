@@ -33,6 +33,7 @@ App Tests:
     name: $CI_REGISTRY_IMAGE/dev-base:latest
   services:
     - postgres:11
+    - redis:latest
   variables:
     DEBUG: "True"
     POSTGRES_DB: virtualbarcamp
@@ -42,6 +43,7 @@ App Tests:
     DB_USER: virtualbarcamp
     DB_PASSWORD: virtualbarcamp
     DB_NAME: virtualbarcamp
+    REDIS_HOST: redis
   before_script:
     - poetry install
   script:

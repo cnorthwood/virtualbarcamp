@@ -8,7 +8,7 @@ const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
 module.exports = {
   mode: process.env.NODE_ENV || "development",
   entry: {
-    browser: "./virtualbarcamp/browser/index.ts",
+    browser: "./virtualbarcamp/browser/index.tsx",
     accounts: "./virtualbarcamp/accounts/browser/index.ts",
   },
   output: {

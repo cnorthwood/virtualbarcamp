@@ -16,6 +16,14 @@ services:
       POSTGRES_USER: virtualbarcamp
       POSTGRES_PASSWORD: virtualbarcamp
 
+  redis:
+    image: redis:latest
+    restart: unless-stopped
+
+  test_redis:
+    image: redis:latest
+    restart: unless-stopped
+
   ui:
     image: node:12
     restart: unless-stopped
@@ -48,6 +56,7 @@ services:
       DB_USER: virtualbarcamp
       DB_PASSWORD: virtualbarcamp
       DB_NAME: virtualbarcamp
+      REDIS_HOST: redis
       WEBPACK_DEV_SERVER_MANIFEST: "http://ui:3000/build/manifest.json"
       DISCORD_OAUTH_CLIENT_ID: 716651923847118948
       DISCORD_OAUTH_CLIENT_SECRET: ${DISCORD_OAUTH_CLIENT_SECRET}
@@ -66,5 +75,6 @@ services:
     environment:
       <<: *app_config
       DB_HOST: test_db
+      REDIS_HOST: test_redis
     working_dir: /app
     command: bash -c 'poetry install --no-root && poetry run ptw virtualbarcamp -- --testmon'

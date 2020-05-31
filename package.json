@@ -1,10 +1,19 @@
 {
   "private": true,
   "dependencies": {
+    "@apollo/react-hooks": "^3.1.5",
+    "apollo-cache-inmemory": "^1.6.6",
+    "apollo-client": "^2.6.10",
+    "apollo-link": "^1.2.14",
+    "apollo-link-http": "^1.5.17",
+    "apollo-link-ws": "^1.0.20",
+    "apollo-utilities": "^1.3.4",
     "bulma": "^0.8.0",
+    "graphql": "^14.6.0",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
-    "react-router-dom": "^5.1.2"
+    "react-router-dom": "^5.1.2",
+    "subscriptions-transport-ws": "^0.9.16"
   },
   "devDependencies": {
     "@types/jest": "^25.2.1",
@@ -17,7 +26,7 @@
     "babel-eslint": "^10.1.0",
     "concurrently": "^5.1.0",
     "css-loader": "^3.5.2",
-    "eslint": "^7.0.0",
+    "eslint": "^6.8.0",
     "eslint-config-prettier": "^6.10.0",
     "eslint-config-react-app": "^5.2.1",
     "eslint-plugin-flowtype": "^4.7.0",
@@ -25,11 +34,11 @@
     "eslint-plugin-jsx-a11y": "^6.2.3",
     "eslint-plugin-prettier": "^3.1.2",
     "eslint-plugin-react": "^7.19.0",
-    "eslint-plugin-react-hooks": "^4.0.0",
+    "eslint-plugin-react-hooks": "^2.5.1",
     "eslint-watch": "^6.0.1",
     "file-loader": "^6.0.0",
     "fork-ts-checker-webpack-plugin": "^4.1.3",
-    "jest": "^26.0.0",
+    "jest": "^25.5.4",
     "mini-css-extract-plugin": "^0.9.0",
     "node-sass": "^4.13.1",
     "prettier": "^2.0.1",
@@ -44,7 +53,7 @@
     "webpack-dev-server": "^3.10.3",
     "webpack-subresource-integrity": "^1.4.0"
   },
-    "scripts": {
+  "scripts": {
     "build": "NODE_ENV=production webpack",
     "dev": "concurrently yarn:dev:*",
     "dev:server": "NODE_ENV=development webpack-dev-server --host 0.0.0.0",

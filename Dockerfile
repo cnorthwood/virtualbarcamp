@@ -26,7 +26,7 @@ RUN poetry export -f requirements.txt -o /app/requirements.txt
 FROM fedora:32
 
 RUN dnf upgrade -y && \
-        dnf install -y uwsgi uwsgi-plugin-python3 nginx python3-pip
+        dnf install -y nginx python3-pip
 COPY --from=builder /app/requirements.txt /app/manage.py /app/
 COPY --from=builder /app/virtualbarcamp/ /app/virtualbarcamp/
 COPY --from=builder /app/build/ /app/build/
@@ -36,4 +36,4 @@ RUN mkdir -p /app/sock && chown nginx:nginx /app/sock
 
 WORKDIR /app
 RUN python3 manage.py collectstatic --no-input
-CMD nginx; uwsgi -s /app/sock/uwsgi --uid nginx --gid nginx --plugin python3 --module virtualbarcamp.wsgi:application 2>/dev/null
+CMD nginx; su -u nginx -c 'daphne -u /app/sock/daphne --proxy-headers virtualbarcamp.asgi:application' 2>/dev/null
