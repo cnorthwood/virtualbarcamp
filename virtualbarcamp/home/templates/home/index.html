@@ -1,18 +1,57 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block page_title %}Virtual BarCamp{% endblock %}
 
 {% block body %}
-<noscript>
-    <div class="section">
+    <header class="navbar is-primary">
         <div class="container">
-            <p>You require JavaScript to load this app.</p>
+            <div class="navbar-brand">
+                <div class="navbar-item">
+                    <h1 class="title is-size-1"><img src="{% static "accounts/barcamplogo.png" %}" alt="BarCamp Manchester" style="max-height: 6rem"></h1>
+                </div>
+            </div>
+            <div class="navbar-menu is-active">
+                <div class="navbar-end">
+                    <div class="navbar-item">
+                        <div class="buttons">
+                            <span style="display: inline-flex; padding: calc(0.5em - 1px) 1em; margin-bottom: 0.5em;">{{ user.username }}</span>
+                            <a class="button is-light" href="{% url "logout" %}">
+                                Log out
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
-</noscript>
-<main id="root" class="section">
-    <div class="container">
-        <p>Loading, please wait...</p>
-    </div>
-</main>
+    </header>
+    <noscript>
+        <div class="section">
+            <div class="container">
+                <p>You require JavaScript to load this app.</p>
+            </div>
+        </div>
+    </noscript>
+    <main id="root" class="section">
+        <div class="container">
+            <p>Loading, please wait...</p>
+        </div>
+    </main>
+    <footer class="footer">
+        <div class="container has-text-centered content">
+            <p>
+                BarCamp Manchester is dedicated to providing a harassment-free unconference experience for everyone,
+                regardless of gender, gender identity and expression, sexual orientation, disability, physical
+                appearance, body size, race, age or religion. We do not tolerate harassment of unconference
+                participants in any form. Unconference participants violating these rules may be sanctioned or
+                expelled from the unconference at the discretion of the BarCamp Manchester volunteers.
+                <a href="https://www.barcampmanchester.co.uk/code-of-conduct.html">Read the full code of conduct</a>.
+            </p>
+            <p>
+                VirtualBarCamp is licensed under <a href="https://www.gnu.org/licenses/agpl-3.0.en.html">AGPLv3</a>.
+                <a href="https://github.com/cnorthwood/virtualbarcamp">Obtain the code at GitHub</a>.
+                <a href="https://www.barcampmanchester.co.uk/privacy.html">Privacy Policy</a>.
+            </p>
+        </div>
+    </footer>
 {% endblock %}
