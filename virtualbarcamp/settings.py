@@ -38,6 +38,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "csp.middleware.CSPMiddleware",
+    "virtualbarcamp.discord.RefreshTokenMiddleware",
 ]
 
 ROOT_URLCONF = "virtualbarcamp.urls"
@@ -118,6 +119,9 @@ AUTHENTICATION_BACKENDS = ["social_core.backends.discord.DiscordOAuth2"]
 
 SOCIAL_AUTH_DISCORD_KEY = os.environ.get("DISCORD_OAUTH_CLIENT_ID")
 SOCIAL_AUTH_DISCORD_SECRET = os.environ.get("DISCORD_OAUTH_CLIENT_SECRET")
+SOCIAL_AUTH_DISCORD_SCOPE = ["identify", "guilds.join"]
+DISCORD_BOT_TOKEN = os.environ.get("DISCORD_OAUTH_BOT_TOKEN")
+DISCORD_GUILD_ID = "721357132326502400"
 
 LOGIN_REDIRECT_URL = "home"
 

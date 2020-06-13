@@ -12,6 +12,8 @@ import { EventState } from "./globalTypes";
 export interface globalSettings_globalSettings {
   __typename: "GlobalSettings";
   eventState: EventState;
+  doorsOpenTime: GraphqlDateTime | null;
+  gridOpenTime: GraphqlDateTime | null;
 }
 
 export interface globalSettings {

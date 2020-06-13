@@ -61,6 +61,7 @@ services:
       WEBPACK_DEV_SERVER_MANIFEST: "http://ui:3000/build/manifest.json"
       DISCORD_OAUTH_CLIENT_ID: ${DISCORD_OAUTH_CLIENT_ID}
       DISCORD_OAUTH_CLIENT_SECRET: ${DISCORD_OAUTH_CLIENT_SECRET}
+      DISCORD_OAUTH_BOT_TOKEN: ${DISCORD_OAUTH_BOT_TOKEN}
     working_dir: /app
     command: bash -c 'poetry install --no-root && poetry run ./manage.py migrate && poetry run ./manage.py runserver 0.0.0.0:8000'
 
