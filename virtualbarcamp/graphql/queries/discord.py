@@ -9,4 +9,3 @@ class DiscordQuery(ObjectType):
     @staticmethod
     def resolve_is_on_discord(parent, info):
         return is_on_server(info.context.user)
-
