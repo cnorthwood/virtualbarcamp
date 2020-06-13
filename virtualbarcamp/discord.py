@@ -31,7 +31,17 @@ def invite_to_server(user: User):
     response = requests.put(
         f"https://discord.com/api/guilds/{settings.DISCORD_GUILD_ID}/members/{social_auth.uid}",
         json={"access_token": social_auth.get_access_token(load_strategy())},
-        headers={"authorization": f"Bot {settings.DISCORD_BOT_TOKEN}"}
+        headers={"authorization": f"Bot {settings.DISCORD_BOT_TOKEN}"},
     )
     response.raise_for_status()
     return response.status_code == 201
+
+
+def remove_from_server(user: User):
+    social_auth = user.social_auth.get(provider="discord")
+    response = requests.put(
+        f"https://discord.com/api/guilds/{settings.DISCORD_GUILD_ID}/members/{social_auth.uid}",
+        headers={"authorization": f"Bot {settings.DISCORD_BOT_TOKEN}"},
+    )
+    response.raise_for_status()
+    return response.status_code == 204

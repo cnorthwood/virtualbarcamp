@@ -128,9 +128,8 @@ _TBC_
 
 Access the Django admin pages, go into users, and untick the "active"
 checkbox. They will no longer be able to log in, and will not be able to
-sign up again with the same account.
-
-TODO: Also remove them from the Discord server if this is done.
+sign up again with the same account. They should also be booted from the
+Discord server if they have joined it.
 
 #### Removing cards from the grid
 

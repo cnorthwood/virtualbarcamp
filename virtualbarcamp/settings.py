@@ -102,7 +102,10 @@ CHANNEL_LAYERS = {
 CELERY_RESULT_BACKEND = "django-db"
 CELERY_TASK_TRACK_STARTED = True
 CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL")
-CELERY_IMPORTS = ["virtualbarcamp.home.signals"]  # Ensure signals are wired up when Celery runs
+CELERY_IMPORTS = [
+    "virtualbarcamp.home.signals",
+    "virtualbarcamp.accounts.signals",
+]  # Ensure signals are wired up when Celery runs
 
 PASSWORD_HASHERS = [
     "django.contrib.auth.hashers.Argon2PasswordHasher",
