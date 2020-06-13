@@ -67,4 +67,4 @@ Build image:
   variables:
     DOCKER_BUILDKIT: "1"
   only:
-    - master
+    - main
