@@ -26,6 +26,19 @@ class RefreshTokenMiddleware:
         return self._get_response(request)
 
 
+def is_on_server(user: User):
+    social_auth = user.social_auth.get(provider="discord")
+    response = requests.get(
+        f"https://discord.com/api/guilds/{settings.DISCORD_GUILD_ID}/members/{social_auth.uid}",
+        headers={"authorization": f"Bot {settings.DISCORD_BOT_TOKEN}"},
+    )
+    if response.status_code == 404:
+        return False
+    else:
+        response.raise_for_status()
+        return True
+
+
 def invite_to_server(user: User):
     social_auth = user.social_auth.get(provider="discord")
     response = requests.put(

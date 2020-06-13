@@ -1,11 +1,12 @@
 from graphene import Schema, ObjectType
 
 from virtualbarcamp.graphql.mutations.discord import DiscordMutation
+from virtualbarcamp.graphql.queries.discord import DiscordQuery
 from virtualbarcamp.graphql.queries.global_settings import GlobalSettingsQuery
 from virtualbarcamp.graphql.subscriptions.global_settings import GlobalSettingsSubscription
 
 
-class Query(GlobalSettingsQuery, ObjectType):
+class Query(DiscordQuery, GlobalSettingsQuery, ObjectType):
     pass
 
 
