@@ -21,7 +21,7 @@ const GLOBAL_STATE_SUBSCRIPTION = gql`
 `;
 
 const App: FunctionComponent = () => {
-  const { data, error, loading, subscribeToMore } = useQuery<globalSettings>(GLOBAL_STATE_QUERY);
+  const { data, error, subscribeToMore } = useQuery<globalSettings>(GLOBAL_STATE_QUERY);
   useEffect(() => {
     subscribeToMore<globalSettingsUpdated>({
       document: GLOBAL_STATE_SUBSCRIPTION,

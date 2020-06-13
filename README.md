@@ -82,7 +82,9 @@ single process. The intention is for this is to be deployed on some sort of
 container platform, and the CI server outputs a single Docker image which can
 be started with multiple invocations to take on the key roles.
 
-_TBD_
+### Deploying
+
+_TBC_
 
 ## Event Runbook
 

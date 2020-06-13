@@ -51,10 +51,9 @@ ReactDOM.render(
   document.getElementById("root"),
 );
 
-// @ts-ignore
 if (module.hot) {
-  // @ts-ignore
   module.hot.accept("./App", () => {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     const NewApp = require("./App").default;
 
     ReactDOM.render(
