@@ -25,6 +25,7 @@ INSTALLED_APPS = [
     "django_celery_beat",
     "virtualbarcamp.accounts",
     "virtualbarcamp.graphql",
+    "virtualbarcamp.grid",
     "virtualbarcamp.home",
 ]
 
@@ -105,6 +106,7 @@ CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL")
 CELERY_IMPORTS = [
     "virtualbarcamp.home.signals",
     "virtualbarcamp.accounts.signals",
+    "virtualbarcamp.grid.signals",
 ]  # Ensure signals are wired up when Celery runs
 
 PASSWORD_HASHERS = [
