@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from "react";
-import gql from "graphql-tag";
-import { useMutation } from "@apollo/react-hooks";
+import { gql, useMutation } from "@apollo/client";
+
 import { inviteToDiscord } from "./graphql/inviteToDiscord";
 
 const INVITE_TO_DISCORD_MUTATION = gql`

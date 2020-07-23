@@ -1,12 +1,15 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { InMemoryCache, NormalizedCacheObject } from "apollo-cache-inmemory";
-import ApolloClient from "apollo-client";
-import { split } from "apollo-link";
-import { WebSocketLink } from "apollo-link-ws";
-import { HttpLink } from "apollo-link-http";
-import { getMainDefinition } from "apollo-utilities";
-import { ApolloProvider } from "@apollo/react-hooks";
+import {
+  ApolloClient,
+  ApolloProvider,
+  HttpLink,
+  InMemoryCache,
+  NormalizedCacheObject,
+  split,
+} from "@apollo/client";
+import { WebSocketLink } from "@apollo/client/link/ws";
+import { getMainDefinition } from "@apollo/client/utilities";
 
 import csrfToken from "./csrf";
 import App from "./App";

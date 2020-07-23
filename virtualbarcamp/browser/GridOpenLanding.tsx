@@ -1,6 +1,6 @@
 import React, { FunctionComponent, useState } from "react";
-import gql from "graphql-tag";
-import { useQuery } from "@apollo/react-hooks";
+import { gql, useQuery } from "@apollo/client";
+
 import { isOnDiscord } from "./graphql/isOnDiscord";
 import InviteToDiscordButton from "./InviteToDiscordButton";
 
