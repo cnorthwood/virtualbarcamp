@@ -1,4 +1,4 @@
-from graphene import ObjectType, NonNull, List, String, DateTime, ID, Boolean
+from graphene import ObjectType, NonNull, List, String, DateTime, ID, Boolean, Field
 
 
 class SpeakerType(ObjectType):
@@ -20,12 +20,23 @@ class TalkType(ObjectType):
     is_mine = NonNull(Boolean)
 
 
+class RoomType(ObjectType):
+    class Meta:
+        name = "Room"
+
+    id = NonNull(ID)
+    name = NonNull(String)
+    slots = NonNull(List(NonNull(lambda: SlotType)))
+
+
 class SlotType(ObjectType):
     class Meta:
         name = "Slot"
 
     id = NonNull(ID)
-    talk = TalkType()
+    talk = Field(TalkType)
+    session = NonNull(lambda: SessionType)
+    room = NonNull(RoomType)
 
 
 class SessionType(ObjectType):
@@ -37,6 +48,7 @@ class SessionType(ObjectType):
     start_time = NonNull(DateTime)
     end_time = NonNull(DateTime)
     event = String()
+    rooms = NonNull(List(NonNull(RoomType)))
     slots = List(NonNull(SlotType))
 
 
