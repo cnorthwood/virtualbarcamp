@@ -28,6 +28,9 @@ class GlobalSettings(Model):
     def event_close_time(self):
         return self._task_time("virtualbarcamp.home.tasks.close_event")
 
+    def __str__(self):
+        return "Global Settings singleton"
+
     def _task_time(self, task):
         try:
             return PeriodicTask.objects.get(task=task, clocked__enabled=True).clocked.clocked_time
