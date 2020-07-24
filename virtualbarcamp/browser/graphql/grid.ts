@@ -38,7 +38,7 @@ export interface grid_grid_sessions_slots {
 export interface grid_grid_sessions {
   __typename: "Session";
   id: string;
-  sessionName: string;
+  name: string;
   startTime: GraphqlDateTime;
   endTime: GraphqlDateTime;
   event: string | null;

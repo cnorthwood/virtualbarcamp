@@ -8,7 +8,7 @@ const GRID_QUERY = gql`
     grid {
       sessions {
         id
-        sessionName
+        name
         startTime
         endTime
         event
