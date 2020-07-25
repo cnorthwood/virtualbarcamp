@@ -156,26 +156,29 @@ const Grid: FunctionComponent = () => {
     MOVE_TALK_MUTATION,
   );
 
-  const onDragEnd = useCallback(async (result: DropResult) => {
-    if (!result.destination) {
-      return;
-    }
+  const onDragEnd = useCallback(
+    async (result: DropResult) => {
+      if (!result.destination) {
+        return;
+      }
 
-    if (result.draggableId === "new") {
-      await addTalk({
-        variables: {
-          slotId: result.destination.droppableId,
-          title: "A new talk",
-          isOpenDiscussion: false,
-          additionalSpeakers: [],
-        },
-      });
-    } else {
-      await moveTalk({
-        variables: { talkId: result.draggableId, toSlot: result.destination.droppableId },
-      });
-    }
-  }, []);
+      if (result.draggableId === "new") {
+        await addTalk({
+          variables: {
+            slotId: result.destination.droppableId,
+            title: "A new talk",
+            isOpenDiscussion: false,
+            additionalSpeakers: [],
+          },
+        });
+      } else {
+        await moveTalk({
+          variables: { talkId: result.draggableId, toSlot: result.destination.droppableId },
+        });
+      }
+    },
+    [addTalk, moveTalk],
+  );
 
   if (loadError || addError || moveError) {
     return (
