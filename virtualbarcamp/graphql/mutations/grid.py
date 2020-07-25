@@ -15,7 +15,6 @@ class GridMutation(ObjectType):
     move_talk = Field(
         NonNull(List(NonNull(SlotType))),
         talk_id=NonNull(ID),
-        from_slot=NonNull(ID),
         to_slot=NonNull(ID),
     )
     update_talk = Field(

@@ -34,6 +34,5 @@ export interface moveTalk {
 
 export interface moveTalkVariables {
   talkId: string;
-  oldSlot: string;
-  newSlot: string;
+  toSlot: string;
 }
