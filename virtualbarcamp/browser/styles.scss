@@ -28,7 +28,7 @@ $primary: #FDCA00;
     position: absolute;
     text-transform: capitalize;
     top: 50%;
-    transform: rotate(-90deg) translateY(1.25rem) translateX(-50%);
+    transform: rotate(-90deg) translateY(3rem) translateX(-50%);
     transform-origin: left center;
     white-space: nowrap;
   }
@@ -66,4 +66,15 @@ $primary: #FDCA00;
   bottom: 0;
   left: 0;
   width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.talk__is-open-discussion {
+  background-color: $info;
+  border-radius: 0 0 0 $box-radius;
+  margin-left: -$box-padding;
+  margin-right: .5em;
+  padding: 2px .5em 2px .5em;
+  text-transform: uppercase;
 }

@@ -1,11 +1,13 @@
 import React, { FunctionComponent, useCallback, useEffect, useState } from "react";
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { DragDropContext, Draggable, Droppable, DropResult } from "react-beautiful-dnd";
+import parseISO from "date-fns/parseISO";
+import format from "date-fns/format";
 
 import { grid } from "./graphql/grid";
 import { slotChanged } from "./graphql/slotChanged";
-import { addTalk, addTalkVariables } from "./graphql/addTalk";
-import { moveTalk, moveTalkVariables } from "./graphql/moveTalk";
+import { addTalk as addTalkResults, addTalkVariables } from "./graphql/addTalk";
+import { moveTalk as moveTalkResults, moveTalkVariables } from "./graphql/moveTalk";
 import { availableSpeakers } from "./graphql/availableSpeakers";
 import Talk from "./Talk";
 
@@ -113,6 +115,8 @@ const MOVE_TALK_MUTATION = gql`
   }
 `;
 
+const fallbackAvailableSpeakers: { id: string; name: string }[] = [];
+
 const Grid: FunctionComponent = () => {
   const { data, loading, error: loadError, subscribeToMore } = useQuery<grid>(GRID_QUERY);
   useEffect(
@@ -146,8 +150,10 @@ const Grid: FunctionComponent = () => {
 
   const { data: speakersData, error: speakersError } = useQuery<availableSpeakers>(SPEAKERS_QUERY);
 
-  const [addTalk, { error: addError }] = useMutation<addTalk, addTalkVariables>(ADD_TALK_MUTATION);
-  const [moveTalk, { error: moveError }] = useMutation<moveTalk, moveTalkVariables>(
+  const [addTalk, { error: addError }] = useMutation<addTalkResults, addTalkVariables>(
+    ADD_TALK_MUTATION,
+  );
+  const [moveTalk, { error: moveError }] = useMutation<moveTalkResults, moveTalkVariables>(
     MOVE_TALK_MUTATION,
   );
 
@@ -231,9 +237,13 @@ const Grid: FunctionComponent = () => {
           <thead>
             <tr>
               <th />
-              {data.grid.sessions.map(({ id, name, event }) => (
+              {data.grid.sessions.map(({ id, name, event, startTime, endTime }) => (
                 <th key={id} scope="col" className="grid__session">
-                  {event ? "" : name}
+                  <p>{event ? "" : name}</p>
+                  <p className="has-text-weight-light">
+                    {format(parseISO(startTime), "p")}
+                    {event ? null : <> – {format(parseISO(endTime), "p")}</>}
+                  </p>
                 </th>
               ))}
             </tr>
@@ -273,19 +283,25 @@ const Grid: FunctionComponent = () => {
                               index={0}
                             >
                               {(provided, snapshot) => (
-                                <Talk
+                                <div
                                   key={slot.talk!.id}
                                   ref={provided.innerRef}
                                   {...provided.draggableProps}
                                   {...provided.dragHandleProps}
-                                  id={slot.talk!.id}
-                                  slotId={slot.id}
-                                  title={slot.talk!.title}
-                                  isMine={slot.talk!.isMine}
-                                  isOpenDiscussion={slot.talk!.isOpenDiscussion}
-                                  speakers={slot.talk!.speakers}
-                                  availableSpeakers={speakersData?.speakers ?? []}
-                                />
+                                >
+                                  <Talk
+                                    key={slot.talk!.id}
+                                    id={slot.talk!.id}
+                                    slotId={slot.id}
+                                    title={slot.talk!.title}
+                                    isMine={slot.talk!.isMine}
+                                    isOpenDiscussion={slot.talk!.isOpenDiscussion}
+                                    speakers={slot.talk!.speakers}
+                                    availableSpeakers={
+                                      speakersData?.speakers ?? fallbackAvailableSpeakers
+                                    }
+                                  />
+                                </div>
                               )}
                             </Draggable>
                           ) : null}

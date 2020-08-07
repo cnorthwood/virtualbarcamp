@@ -1,14 +1,14 @@
 import React, {
   ChangeEvent,
   FormEvent,
-  forwardRef,
+  FunctionComponent,
   MouseEvent,
   useCallback,
   useState,
 } from "react";
 import { gql, useMutation } from "@apollo/client";
-import { removeTalk, removeTalkVariables } from "./graphql/removeTalk";
-import { updateTalk, updateTalkVariables } from "./graphql/updateTalk";
+import { removeTalk as removeTalkResults, removeTalkVariables } from "./graphql/removeTalk";
+import { updateTalk as updateTalkResults, updateTalkVariables } from "./graphql/updateTalk";
 
 const REMOVE_TALK_MUTATION = gql`
   mutation removeTalk($slotId: ID!) {
@@ -52,18 +52,15 @@ const UPDATE_TALK_MUTATION = gql`
   }
 `;
 
-const Talk = forwardRef<
-  HTMLDivElement,
-  {
-    id: string;
-    slotId: string;
-    title: string;
-    isMine: boolean;
-    isOpenDiscussion: boolean;
-    speakers: { id: string; name: string }[];
-    availableSpeakers: { id: string; name: string }[];
-  }
->(({ id, slotId, isMine, title, isOpenDiscussion, speakers, availableSpeakers }, ref) => {
+const Talk: FunctionComponent<{
+  id: string;
+  slotId: string;
+  title: string;
+  isMine: boolean;
+  isOpenDiscussion: boolean;
+  speakers: { id: string; name: string }[];
+  availableSpeakers: { id: string; name: string }[];
+}> = ({ id, slotId, isMine, title, isOpenDiscussion, speakers, availableSpeakers }) => {
   const [updateWindowOpened, setUpdateWindowOpened] = useState<boolean>(false);
 
   const [newTitle, setNewTitle] = useState<string>(title);
@@ -94,12 +91,12 @@ const Talk = forwardRef<
   );
 
   const [removeTalkMutation, { error: removeError, loading: removeLoading }] = useMutation<
-    removeTalk,
+    removeTalkResults,
     removeTalkVariables
   >(REMOVE_TALK_MUTATION, { variables: { slotId } });
 
   const [updateTalkMutation, { error: updateError, loading: updateLoading }] = useMutation<
-    updateTalk,
+    updateTalkResults,
     updateTalkVariables
   >(UPDATE_TALK_MUTATION, {
     variables: {
@@ -170,7 +167,7 @@ const Talk = forwardRef<
   }
 
   return (
-    <div ref={ref} className={"talk"}>
+    <div className="talk">
       <h3 className="title is-size-4">{title}</h3>
       {isMine ? (
         <>
@@ -232,8 +229,13 @@ const Talk = forwardRef<
                 </div>
               </div>
               <div className="modal-card-foot">
-                <button className="button is-success">Save changes</button>
-                <button className="button is-danger" onClick={removeTalk}>
+                <button className={`button is-success ${updateLoading ? "is-loading" : ""}`}>
+                  Save changes
+                </button>
+                <button
+                  className={`button is-danger ${removeLoading ? "is-loading" : ""}`}
+                  onClick={removeTalk}
+                >
                   Remove talk
                 </button>
                 <button className="button" onClick={closeUpdateWindow}>
@@ -255,6 +257,6 @@ const Talk = forwardRef<
       </div>
     </div>
   );
-});
+};
 
 export default Talk;
