@@ -9,6 +9,7 @@ license = "AGPL-3.0-or-later"
 python = "^3.8"
 celery = {extras = ["redis"], version = "^4.4.2"}
 channels = "^2.4.0"
+channels-redis = "^2.4.2"
 daphne = "^2.5.0"
 django = {extras = ["argon2"], version = "^3.0.6"}
 django-celery-beat = "^2.0.0"
@@ -19,7 +20,6 @@ graphene-subscriptions = "^1.0.2"
 psycopg2-binary = "^2.8.5"
 requests = "^2.23.0"
 social-auth-app-django = "^3.4.0"
-channels-redis = "^2.4.2"
 
 [tool.poetry.dev-dependencies]
 black = "^19.10b0"

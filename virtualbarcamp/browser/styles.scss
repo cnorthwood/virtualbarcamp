@@ -1,3 +1,69 @@
 $primary: #FDCA00;
 
 @import "~bulma";
+
+.grid {
+  th.grid__session,
+  th.grid__room {
+    padding: 1em;
+    text-align: center;
+    vertical-align: middle;
+    min-width: 3em;
+    white-space: nowrap;
+  }
+
+  .grid__slot {
+    border: 1px solid $grey;
+    min-width: 400px;
+    height: 140px;
+  }
+
+  .grid__event {
+    position: relative;
+  }
+
+  .grid__event-name {
+    @extend .is-size-4;
+    font-weight: bold;
+    position: absolute;
+    text-transform: capitalize;
+    top: 50%;
+    transform: rotate(-90deg) translateY(1.25rem) translateX(-50%);
+    transform-origin: left center;
+    white-space: nowrap;
+  }
+}
+
+.talk {
+  @extend .box;
+  border: 1px solid $light;
+  margin: 4px;
+  height: 140px;
+  position: relative;
+
+  .edit {
+    background-color: rgba(10, 10, 10, 0.2);
+    border: 1px solid $dark;
+    box-shadow: 3px 0 0 $light;
+    border-radius: 100%;
+    cursor: pointer;
+    font-size: 1.25rem;
+    height: 1.75rem;
+    width: 1.75rem;
+    padding: 0;
+    position: absolute;
+    top: $box-padding / 2;
+    right: $box-padding / 2;
+  }
+}
+
+.talk__speakers {
+  background-color: $dark;
+  border-radius: 0 0 $box-radius $box-radius;
+  color: $light;
+  padding: 0 $box-padding;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+}

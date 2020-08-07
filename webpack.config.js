@@ -68,5 +68,6 @@ module.exports = {
       "Access-Control-Allow-Origin": "*",
       "Access-Control-Allow-Methods": "GET",
     },
+    watchOptions: { poll: true, ignored: /node_modules/ },
   },
 };

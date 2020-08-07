@@ -44,7 +44,7 @@ class Talk(Model):
     title = TextField()
     owner = ForeignKey(User, on_delete=CASCADE)
     open_discussion = BooleanField(default=False)
-    other_speakers = ManyToManyField(User, related_name="+")
+    other_speakers = ManyToManyField(User, related_name="+", blank=True)
 
     def __str__(self):
         return f"Talk: {self.title}"

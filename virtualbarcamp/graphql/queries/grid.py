@@ -29,7 +29,7 @@ class TalkType(ObjectType):
 
     @staticmethod
     def resolve_speakers(parent: Talk, info):
-        return [parent.owner] + parent.other_speakers
+        return [parent.owner, *parent.other_speakers.all()]
 
     @staticmethod
     def resolve_is_open_discussion(parent: Talk, info):
@@ -121,3 +121,11 @@ class GridQuery(ObjectType):
             return {"sessions": Session.objects.all()}
         else:
             raise ValueError("Can not view grid in this state")
+
+    @staticmethod
+    def resolve_speakers(parent, info):
+        global_settings = GlobalSettings.objects.first()
+        if global_settings.event_state in ("GRID_OPEN",):
+            return User.objects.all().order_by("username").exclude(id=info.context.user.id)
+        else:
+            raise ValueError("Can not view speaker list in this state")

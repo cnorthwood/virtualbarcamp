@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useCallback, useEffect } from "react";
+import React, { FunctionComponent, useCallback, useEffect, useState } from "react";
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { DragDropContext, Draggable, Droppable, DropResult } from "react-beautiful-dnd";
 
@@ -6,6 +6,8 @@ import { grid } from "./graphql/grid";
 import { slotChanged } from "./graphql/slotChanged";
 import { addTalk, addTalkVariables } from "./graphql/addTalk";
 import { moveTalk, moveTalkVariables } from "./graphql/moveTalk";
+import { availableSpeakers } from "./graphql/availableSpeakers";
+import Talk from "./Talk";
 
 const GRID_QUERY = gql`
   query grid {
@@ -34,6 +36,15 @@ const GRID_QUERY = gql`
           }
         }
       }
+    }
+  }
+`;
+
+const SPEAKERS_QUERY = gql`
+  query availableSpeakers {
+    speakers {
+      id
+      name
     }
   }
 `;
@@ -102,24 +113,6 @@ const MOVE_TALK_MUTATION = gql`
   }
 `;
 
-const REMOVE_TALK_MUTATION = gql`
-  mutation removeTalk($slotId: ID!) {
-    removeTalk(slotId: $slotId) {
-      id
-      talk {
-        id
-        title
-        isMine
-        isOpenDiscussion
-        speakers {
-          id
-          name
-        }
-      }
-    }
-  }
-`;
-
 const Grid: FunctionComponent = () => {
   const { data, loading, error: loadError, subscribeToMore } = useQuery<grid>(GRID_QUERY);
   useEffect(
@@ -151,10 +144,16 @@ const Grid: FunctionComponent = () => {
     [subscribeToMore],
   );
 
+  const { data: speakersData, error: speakersError } = useQuery<availableSpeakers>(SPEAKERS_QUERY);
+
   const [addTalk, { error: addError }] = useMutation<addTalk, addTalkVariables>(ADD_TALK_MUTATION);
   const [moveTalk, { error: moveError }] = useMutation<moveTalk, moveTalkVariables>(
     MOVE_TALK_MUTATION,
   );
+
+  const [newTalkTitle, setNewTalkTitle] = useState<string>("");
+  const [newTalkIsOpenDiscussion, setNewTalkIsOpenDiscussion] = useState<boolean>(false);
+  const [newTalkAdditionalSpeakers, setNewTalkAdditionalSpeakers] = useState<string[]>([]);
 
   const onDragEnd = useCallback(
     async (result: DropResult) => {
@@ -166,28 +165,40 @@ const Grid: FunctionComponent = () => {
         await addTalk({
           variables: {
             slotId: result.destination.droppableId,
-            title: "A new talk",
-            isOpenDiscussion: false,
-            additionalSpeakers: [],
+            title: newTalkTitle,
+            isOpenDiscussion: newTalkIsOpenDiscussion,
+            additionalSpeakers: newTalkAdditionalSpeakers,
           },
         });
+        setNewTalkTitle("");
+        setNewTalkIsOpenDiscussion(false);
+        setNewTalkAdditionalSpeakers([]);
       } else {
         await moveTalk({
           variables: { talkId: result.draggableId, toSlot: result.destination.droppableId },
         });
       }
     },
-    [addTalk, moveTalk],
+    [
+      addTalk,
+      moveTalk,
+      newTalkTitle,
+      setNewTalkTitle,
+      newTalkIsOpenDiscussion,
+      setNewTalkIsOpenDiscussion,
+      newTalkAdditionalSpeakers,
+      setNewTalkAdditionalSpeakers,
+    ],
   );
 
-  if (loadError || addError || moveError) {
+  if (loadError || addError || moveError || speakersError) {
     return (
       <div className="container">
         <div className="message">
           <div className="message-header">An error has occurred</div>
           <div className="message-body">
             <p>An error occurred when loading the grid</p>
-            <pre>{(loadError || addError || moveError)?.message}</pre>
+            <pre>{(loadError || addError || moveError || speakersError)?.message}</pre>
           </div>
         </div>
       </div>
@@ -216,13 +227,13 @@ const Grid: FunctionComponent = () => {
   return (
     <DragDropContext nonce={document.getElementById("root")!.dataset.nonce} onDragEnd={onDragEnd}>
       <div className="table-container">
-        <table className="table">
+        <table className="grid">
           <thead>
             <tr>
-              <th scope="col">Room</th>
+              <th />
               {data.grid.sessions.map(({ id, name, event }) => (
-                <th key={id} scope="col">
-                  {name}
+                <th key={id} scope="col" className="grid__session">
+                  {event ? "" : name}
                 </th>
               ))}
             </tr>
@@ -230,12 +241,14 @@ const Grid: FunctionComponent = () => {
           <tbody>
             {rooms.map((room, i) => (
               <tr key={room.id}>
-                <th scope="row">{room.name}</th>
+                <th scope="row" className="grid__room">
+                  {room.name}
+                </th>
                 {data!.grid.sessions.map(({ id, event, slots }) => {
                   if (event !== null || !slots) {
                     return i === 0 ? (
-                      <td key={id} rowSpan={rooms.length}>
-                        {event}
+                      <td key={id} rowSpan={rooms.length} className="grid__event">
+                        <span className="grid__event-name">{event}</span>
                       </td>
                     ) : null;
                   }
@@ -248,7 +261,11 @@ const Grid: FunctionComponent = () => {
                   return (
                     <Droppable key={id} droppableId={slot.id} isDropDisabled={slot.talk !== null}>
                       {(provided, snapshot) => (
-                        <td ref={provided.innerRef} {...provided.droppableProps}>
+                        <td
+                          ref={provided.innerRef}
+                          {...provided.droppableProps}
+                          className="grid__slot"
+                        >
                           {slot.talk ? (
                             <Draggable
                               draggableId={slot.talk.id}
@@ -256,13 +273,19 @@ const Grid: FunctionComponent = () => {
                               index={0}
                             >
                               {(provided, snapshot) => (
-                                <div
+                                <Talk
+                                  key={slot.talk!.id}
                                   ref={provided.innerRef}
                                   {...provided.draggableProps}
                                   {...provided.dragHandleProps}
-                                >
-                                  Drag me!
-                                </div>
+                                  id={slot.talk!.id}
+                                  slotId={slot.id}
+                                  title={slot.talk!.title}
+                                  isMine={slot.talk!.isMine}
+                                  isOpenDiscussion={slot.talk!.isOpenDiscussion}
+                                  speakers={slot.talk!.speakers}
+                                  availableSpeakers={speakersData?.speakers ?? []}
+                                />
                               )}
                             </Draggable>
                           ) : null}
