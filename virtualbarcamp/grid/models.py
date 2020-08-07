@@ -30,7 +30,6 @@ class Session(Model):
         return f"Session: {self.session_name}"
 
 
-# TODO: wire up model changes to Celery events
 class Slot(Model):
     room = ForeignKey(Room, on_delete=CASCADE)
     session = ForeignKey(Session, on_delete=CASCADE)
