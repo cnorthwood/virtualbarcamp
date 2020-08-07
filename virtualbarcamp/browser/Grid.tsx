@@ -130,20 +130,22 @@ const Grid: FunctionComponent = () => {
               data: { slotChanged },
             },
           },
-        ) => {
-          return {
-            grid: {
-              ...previousData.grid,
-              sessions: previousData.grid.sessions.map((session) => ({
-                ...session,
-                slots:
-                  session.slots?.map((slot) =>
-                    slotChanged.id === slot.id ? { ...slot, ...slotChanged } : slot,
-                  ) ?? null,
-              })),
-            },
-          };
-        },
+        ) => ({
+          grid: {
+            ...previousData.grid,
+            sessions: previousData.grid.sessions.map((session) => ({
+              ...session,
+              slots:
+                session.slots?.map((slot) =>
+                  slotChanged.id === slot.id
+                    ? { ...slot, ...slotChanged }
+                    : slot.talk?.id === slotChanged.talk?.id
+                    ? { ...slot, talk: null }
+                    : { ...slot },
+                ) ?? null,
+            })),
+          },
+        }),
       }),
     [subscribeToMore],
   );
