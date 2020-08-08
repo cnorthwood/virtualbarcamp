@@ -4,7 +4,7 @@ import React, {
   FunctionComponent,
   MouseEvent,
   useCallback,
-  useRef,
+  useEffect,
   useState,
 } from "react";
 import { gql, useMutation } from "@apollo/client";
@@ -65,6 +65,19 @@ const Talk: FunctionComponent<{
 }> = ({ id, slotId, isMine, title, isOpenDiscussion, speakers, availableSpeakers }) => {
   const [updateWindowOpened, setUpdateWindowOpened] = useState<boolean>(false);
 
+  const closeUpdateWindow = useCallback(
+    (ev: MouseEvent<HTMLButtonElement> | KeyboardEvent) => {
+      ev.preventDefault();
+      setUpdateWindowOpened(false);
+    },
+    [setUpdateWindowOpened],
+  );
+
+  useEffect(() => {
+    document.addEventListener("keydown", closeUpdateWindow);
+    return () => document.removeEventListener("keydown", closeUpdateWindow);
+  }, [closeUpdateWindow]);
+
   const [newTitle, setNewTitle] = useState<string>(title);
   const [newIsOpenDiscussion, setNewIsOpenDiscussion] = useState<boolean>(isOpenDiscussion);
   const [newAdditionalSpeakers, setNewAdditionalSpeakers] = useState<string[]>(
@@ -103,6 +116,7 @@ const Talk: FunctionComponent<{
 
   const updateTalk = useCallback(
     (ev: FormEvent<HTMLFormElement>) => {
+      console.log("updating talk");
       ev.preventDefault();
       if (ev.currentTarget.reportValidity()) {
         updateTalkMutation().then(() => setUpdateWindowOpened(false));
@@ -140,14 +154,6 @@ const Talk: FunctionComponent<{
     ],
   );
 
-  const closeUpdateWindow = useCallback(
-    (ev: MouseEvent<HTMLButtonElement>) => {
-      ev.preventDefault();
-      setUpdateWindowOpened(false);
-    },
-    [setUpdateWindowOpened],
-  );
-
   if (removeError || updateError) {
     return (
       <div className="message">
@@ -170,7 +176,12 @@ const Talk: FunctionComponent<{
             <form className="modal-card" onSubmit={updateTalk}>
               <div className="modal-card-head">
                 <p className="modal-card-title">Edit talk</p>
-                <button className="delete" aria-label="close" onClick={closeUpdateWindow} />
+                <button
+                  className="delete"
+                  aria-label="close"
+                  onClick={closeUpdateWindow}
+                  type="button"
+                />
               </div>
               <div className="modal-card-body">
                 <div className="field">
@@ -207,16 +218,20 @@ const Talk: FunctionComponent<{
                 </div>
               </div>
               <div className="modal-card-foot">
-                <button className={`button is-success ${updateLoading ? "is-loading" : ""}`}>
+                <button
+                  className={`button is-success ${updateLoading ? "is-loading" : ""}`}
+                  type="submit"
+                >
                   Save changes
                 </button>
                 <button
                   className={`button is-danger ${removeLoading ? "is-loading" : ""}`}
                   onClick={removeTalk}
+                  type="button"
                 >
                   Remove talk
                 </button>
-                <button className="button" onClick={closeUpdateWindow}>
+                <button className="button" onClick={closeUpdateWindow} type="button">
                   Cancel
                 </button>
               </div>

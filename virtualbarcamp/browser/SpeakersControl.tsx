@@ -35,6 +35,7 @@ const SpeakersControl: FunctionComponent<{
             {name}{" "}
             <button
               className="delete"
+              type="button"
               aria-label={`remove ${name}`}
               value={speaker}
               onClick={removeSpeaker}
@@ -57,7 +58,7 @@ const SpeakersControl: FunctionComponent<{
           </div>
         </div>
         <div className="control">
-          <button className="button" onClick={addSpeaker}>
+          <button className="button" onClick={addSpeaker} type="button">
             Add additional speaker
           </button>
         </div>
