@@ -4,11 +4,13 @@ import React, {
   FunctionComponent,
   MouseEvent,
   useCallback,
+  useRef,
   useState,
 } from "react";
 import { gql, useMutation } from "@apollo/client";
 import { removeTalk as removeTalkResults, removeTalkVariables } from "./graphql/removeTalk";
 import { updateTalk as updateTalkResults, updateTalkVariables } from "./graphql/updateTalk";
+import SpeakersControl from "./SpeakersControl";
 
 const REMOVE_TALK_MUTATION = gql`
   mutation removeTalk($slotId: ID!) {
@@ -80,14 +82,6 @@ const Talk: FunctionComponent<{
       setNewIsOpenDiscussion(ev.currentTarget.checked);
     },
     [setNewIsOpenDiscussion],
-  );
-  const changeNewAdditionalSpeakers = useCallback(
-    (ev: ChangeEvent<HTMLSelectElement>) => {
-      setNewAdditionalSpeakers(
-        Array.from(ev.currentTarget.selectedOptions).map(({ value }) => value),
-      );
-    },
-    [setNewAdditionalSpeakers],
   );
 
   const [removeTalkMutation, { error: removeError, loading: removeLoading }] = useMutation<
@@ -194,27 +188,11 @@ const Talk: FunctionComponent<{
                     />
                   </div>
                 </div>
-                <div className="field">
-                  <label className="label" htmlFor="additional-speakers">
-                    Additional speakers
-                  </label>
-                  <div className="control">
-                    <div className="select is-multiple">
-                      <select
-                        id="additional-speakers"
-                        multiple
-                        value={newAdditionalSpeakers}
-                        onChange={changeNewAdditionalSpeakers}
-                      >
-                        {availableSpeakers.map(({ id, name }) => (
-                          <option key={id} value={id}>
-                            {name}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
-                </div>
+                <SpeakersControl
+                  speakers={newAdditionalSpeakers}
+                  availableSpeakers={availableSpeakers}
+                  onChange={setNewAdditionalSpeakers}
+                />
                 <div className="field">
                   <div className="control">
                     <label className="checkbox">

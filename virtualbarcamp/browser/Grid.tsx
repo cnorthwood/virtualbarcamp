@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useCallback, useEffect, useState } from "react";
+import React, { ChangeEvent, FunctionComponent, useCallback, useEffect, useState } from "react";
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { DragDropContext, Draggable, Droppable, DropResult } from "react-beautiful-dnd";
 import parseISO from "date-fns/parseISO";
@@ -10,6 +10,7 @@ import { addTalk as addTalkResults, addTalkVariables } from "./graphql/addTalk";
 import { moveTalk as moveTalkResults, moveTalkVariables } from "./graphql/moveTalk";
 import { availableSpeakers } from "./graphql/availableSpeakers";
 import Talk from "./Talk";
+import SpeakersControl from "./SpeakersControl";
 
 const GRID_QUERY = gql`
   query grid {
@@ -163,6 +164,20 @@ const Grid: FunctionComponent = () => {
   const [newTalkIsOpenDiscussion, setNewTalkIsOpenDiscussion] = useState<boolean>(false);
   const [newTalkAdditionalSpeakers, setNewTalkAdditionalSpeakers] = useState<string[]>([]);
 
+  const changeNewTalkTitle = useCallback(
+    (ev: ChangeEvent<HTMLInputElement>) => {
+      setNewTalkTitle(ev.currentTarget.value);
+    },
+    [setNewTalkTitle],
+  );
+
+  const changeNewTalkIsOpenDiscussion = useCallback(
+    (ev: ChangeEvent<HTMLInputElement>) => {
+      setNewTalkIsOpenDiscussion(ev.currentTarget.checked);
+    },
+    [setNewTalkIsOpenDiscussion],
+  );
+
   const onDragEnd = useCallback(
     async (result: DropResult) => {
       if (!result.destination) {
@@ -286,7 +301,7 @@ const Grid: FunctionComponent = () => {
                             >
                               {(provided, snapshot) => (
                                 <div
-                                  key={slot.talk!.id}
+                                  key={slot.id}
                                   ref={provided.innerRef}
                                   {...provided.draggableProps}
                                   {...provided.dragHandleProps}
@@ -306,8 +321,14 @@ const Grid: FunctionComponent = () => {
                                 </div>
                               )}
                             </Draggable>
-                          ) : null}
-                          {provided.placeholder}
+                          ) : (
+                            <div
+                              key={slot.id}
+                              className={`grid__empty-slot ${
+                                snapshot.isDraggingOver ? "grid__empty-slot--target" : ""
+                              }`}
+                            />
+                          )}
                         </td>
                       )}
                     </Droppable>
@@ -318,6 +339,58 @@ const Grid: FunctionComponent = () => {
           </tbody>
         </table>
       </div>
+      <Droppable droppableId="new" isDropDisabled={true}>
+        {(provided, snapshot) => (
+          <div className="container" ref={provided.innerRef} {...provided.droppableProps}>
+            <Draggable draggableId="new" isDragDisabled={newTalkTitle === ""} index={0}>
+              {(provided, snapshot) => (
+                <div
+                  ref={provided.innerRef}
+                  {...provided.draggableProps}
+                  {...provided.dragHandleProps}
+                  className="grid__slot--blank"
+                >
+                  <div className="talk talk--new">
+                    <div className="field">
+                      <label className="label" htmlFor="title">
+                        Talk Title
+                      </label>
+                      <div className="control">
+                        <input
+                          className="input"
+                          id="title"
+                          type="text"
+                          required
+                          value={newTalkTitle}
+                          onChange={changeNewTalkTitle}
+                        />
+                      </div>
+                    </div>
+                    <SpeakersControl
+                      speakers={newTalkAdditionalSpeakers}
+                      availableSpeakers={speakersData?.speakers ?? fallbackAvailableSpeakers}
+                      onChange={setNewTalkAdditionalSpeakers}
+                    />
+                    <div className="field">
+                      <div className="control">
+                        <label className="checkbox">
+                          <input
+                            type="checkbox"
+                            checked={newTalkIsOpenDiscussion}
+                            onChange={changeNewTalkIsOpenDiscussion}
+                          />{" "}
+                          Open discussion
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </Draggable>
+            {provided.placeholder}
+          </div>
+        )}
+      </Droppable>
     </DragDropContext>
   );
 };

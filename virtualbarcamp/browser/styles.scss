@@ -1,4 +1,4 @@
-$primary: #FDCA00;
+$primary: #fdca00;
 
 @import "~bulma";
 
@@ -32,6 +32,15 @@ $primary: #FDCA00;
     transform-origin: left center;
     white-space: nowrap;
   }
+}
+
+.grid__empty-slot--target {
+  background-color: $info;
+  height: 140px;
+}
+
+.grid__slot--blank {
+  width: 400px;
 }
 
 .talk {
@@ -74,7 +83,11 @@ $primary: #FDCA00;
   background-color: $info;
   border-radius: 0 0 0 $box-radius;
   margin-left: -$box-padding;
-  margin-right: .5em;
-  padding: 2px .5em 2px .5em;
+  margin-right: 0.5em;
+  padding: 2px 0.5em 2px 0.5em;
   text-transform: uppercase;
+}
+
+.talk--new {
+  height: auto;
 }
