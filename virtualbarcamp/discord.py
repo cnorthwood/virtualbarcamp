@@ -36,6 +36,10 @@ def is_on_server(user: User):
         return False
     else:
         response.raise_for_status()
+        discord_nick = response.json()["nick"]
+        if discord_nick and discord_nick != user.username:
+            user.username = discord_nick
+            user.save()
         return True
 
 
