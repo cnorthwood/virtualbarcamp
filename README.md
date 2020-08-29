@@ -31,6 +31,7 @@ then create a `.env` file at the root of the project with content like:
 ```
 DISCORD_OAUTH_CLIENT_ID=123456
 DISCORD_OAUTH_CLIENT_SECRET=abcdef
+DISCORD_OAUTH_BOT_TOKEN=foobarbaz
 ```
 
 Or, if you know Chris and he trusts you, he can share the BarCamp Manchester
