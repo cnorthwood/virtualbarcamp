@@ -32,8 +32,8 @@ App Tests:
   image:
     name: $CI_REGISTRY_IMAGE/dev-base:latest
   services:
-    - postgres:11
-    - redis:latest
+    - postgres:12
+    - redis:5
   variables:
     DEBUG: "True"
     POSTGRES_DB: virtualbarcamp
@@ -44,7 +44,7 @@ App Tests:
     DB_PASSWORD: virtualbarcamp
     DB_NAME: virtualbarcamp
     REDIS_HOST: redis
-    CELERY_BROKE_URL: redis://redis
+    REDIS_PORT: 6379
   before_script:
     - poetry install
   script:
