@@ -57,7 +57,6 @@ services:
       DB_PASSWORD: virtualbarcamp
       DB_NAME: virtualbarcamp
       REDIS_HOST: redis
-      CELERY_BROKER_URL: redis://redis
       WEBPACK_DEV_SERVER_MANIFEST: "http://ui:3000/build/manifest.json"
       DISCORD_OAUTH_CLIENT_ID: ${DISCORD_OAUTH_CLIENT_ID}
       DISCORD_OAUTH_CLIENT_SECRET: ${DISCORD_OAUTH_CLIENT_SECRET}
@@ -79,7 +78,6 @@ services:
       <<: *app_config
       DB_HOST: test_db
       REDIS_HOST: test_redis
-      CELERY_BROKER_URL: redis://test_redis
     working_dir: /app
     command: bash -c 'poetry install --no-root && poetry run ptw virtualbarcamp -- --testmon'
 

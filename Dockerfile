@@ -27,7 +27,7 @@ FROM fedora:32
 
 RUN dnf upgrade -y && \
         dnf install -y nginx python3-pip gcc python3-devel
-COPY --from=builder /app/requirements.txt /app/manage.py /app/
+COPY --from=builder /app/requirements.txt /app/manage.py /app/init.sh /app/
 COPY --from=builder /app/virtualbarcamp/ /app/virtualbarcamp/
 COPY --from=builder /app/build/ /app/build/
 COPY --from=builder /app/nginx.conf /etc/nginx/nginx.conf
@@ -36,4 +36,4 @@ RUN mkdir -p /app/sock && chown nginx:nginx /app/sock
 
 WORKDIR /app
 RUN python3 manage.py collectstatic --no-input
-CMD nginx; su -u nginx -c 'daphne -u /app/sock/daphne --proxy-headers virtualbarcamp.asgi:application' 2>/dev/null
+ENTRYPOINT /app/init.sh
