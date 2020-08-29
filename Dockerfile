@@ -36,4 +36,4 @@ RUN mkdir -p /app/sock && chown nginx:nginx /app/sock
 
 WORKDIR /app
 RUN python3 manage.py collectstatic --no-input
-ENTRYPOINT /app/init.sh
+ENTRYPOINT ["/app/init.sh"]
