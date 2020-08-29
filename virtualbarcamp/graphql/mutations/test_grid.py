@@ -209,7 +209,9 @@ def test_removing_a_talk_fails_unless_grid_is_open():
 
     with pytest.raises(ValueError):
         GridMutation.resolve_remove_talk(
-            None, GraphQLInfo(user), slot_id=talk.slot.id,
+            None,
+            GraphQLInfo(user),
+            slot_id=talk.slot.id,
         )
 
 
@@ -222,7 +224,9 @@ def test_removing_a_talk_fails_unless_user_owns_it():
 
     with pytest.raises(ValueError):
         GridMutation.resolve_remove_talk(
-            None, GraphQLInfo(user), slot_id=talk.slot.id,
+            None,
+            GraphQLInfo(user),
+            slot_id=talk.slot.id,
         )
 
 
@@ -232,7 +236,11 @@ def test_removing_a_talk_succeeds():
     user = User.objects.create(username="user1")
     talk = _create_talk(owner=user, title="A talk")
 
-    slot = GridMutation.resolve_remove_talk(None, GraphQLInfo(user), slot_id=talk.slot.id,)
+    slot = GridMutation.resolve_remove_talk(
+        None,
+        GraphQLInfo(user),
+        slot_id=talk.slot.id,
+    )
 
     with pytest.raises(Slot.talk.RelatedObjectDoesNotExist):
         assert slot.talk is None

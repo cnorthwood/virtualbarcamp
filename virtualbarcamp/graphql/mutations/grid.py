@@ -16,7 +16,11 @@ class GridMutation(ObjectType):
         additional_speakers=NonNull(List(NonNull(ID))),
         is_open_discussion=NonNull(Boolean),
     )
-    move_talk = Field(NonNull(List(NonNull(SlotType))), talk_id=NonNull(ID), to_slot=NonNull(ID),)
+    move_talk = Field(
+        NonNull(List(NonNull(SlotType))),
+        talk_id=NonNull(ID),
+        to_slot=NonNull(ID),
+    )
     update_talk = Field(
         NonNull(TalkType),
         talk_id=NonNull(ID),

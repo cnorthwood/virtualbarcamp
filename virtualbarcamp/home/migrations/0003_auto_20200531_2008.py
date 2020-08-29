@@ -11,7 +11,10 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RemoveField(model_name="globalsettings", name="allow_registration",),
+        migrations.RemoveField(
+            model_name="globalsettings",
+            name="allow_registration",
+        ),
         migrations.AddField(
             model_name="globalsettings",
             name="event_state",

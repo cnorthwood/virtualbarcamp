@@ -1,7 +1,7 @@
 version: "3.4"
 services:
   db:
-    image: postgres:11
+    image: postgres:12
     restart: unless-stopped
     environment:
       POSTGRES_DB: virtualbarcamp
@@ -9,7 +9,7 @@ services:
       POSTGRES_PASSWORD: virtualbarcamp
 
   test_db:
-    image: postgres:11
+    image: postgres:12
     restart: unless-stopped
     environment:
       POSTGRES_DB: virtualbarcamp
@@ -17,11 +17,11 @@ services:
       POSTGRES_PASSWORD: virtualbarcamp
 
   redis:
-    image: redis:latest
+    image: redis:5
     restart: unless-stopped
 
   test_redis:
-    image: redis:latest
+    image: redis:5
     restart: unless-stopped
 
   ui:
