@@ -8,7 +8,7 @@ case "$1" in
     echo "$TLS_PRIVATE_KEY" > /etc/nginx/key.pem
 
     nginx
-    sudo -Eu nginx daphne -u /app/sock/daphne --proxy-headers virtualbarcamp.asgi:application 2>/dev/null
+    sudo -Eu nginx daphne -u /app/sock/daphne --proxy-headers virtualbarcamp.asgi:application
     ;;
 
   migrate)
