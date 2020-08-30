@@ -80,6 +80,9 @@ resource "kubernetes_service" "virtualbarcamp" {
 resource "kubernetes_deployment" "virtualbarcamp_www" {
   metadata {
     name = "virtualbarcamp-www"
+
+    annotations = {}
+    labels      = {}
   }
 
   spec {
@@ -110,17 +113,22 @@ resource "kubernetes_deployment" "virtualbarcamp_www" {
 
           env {
             name  = "TLS_CERTIFICATE"
-            value = "${acme_certificate.online_barcampmanchester_co_uk.issuer_pem}\n${acme_certificate.online_barcampmanchester_co_uk.certificate_pem}"
+            value = "${acme_certificate.www_certificate.certificate_pem}${acme_certificate.www_certificate.issuer_pem}"
           }
 
           env {
             name  = "TLS_PRIVATE_KEY"
-            value = tls_private_key.online_barcampmanchester_co_uk.private_key_pem
+            value = acme_certificate.www_certificate.private_key_pem
           }
 
           env {
             name  = "SECRET_KEY"
             value = random_string.django_secret.result
+          }
+
+          env {
+            name  = "APP_HOST"
+            value = var.app_hostname
           }
 
           env {
@@ -149,13 +157,13 @@ resource "kubernetes_deployment" "virtualbarcamp_www" {
           }
 
           env {
-            name  = "REDIS_HOST"
-            value = digitalocean_database_cluster.queue.private_host
+            name  = "DB_SSL_MODE"
+            value = "require"
           }
 
           env {
-            name  = "REDIS_PORT"
-            value = digitalocean_database_cluster.queue.port
+            name  = "REDIS_URI"
+            value = "rediss://${digitalocean_database_cluster.queue.user}:${digitalocean_database_cluster.queue.password}@${digitalocean_database_cluster.queue.private_host}:${digitalocean_database_cluster.queue.port}"
           }
 
           env {
@@ -173,14 +181,29 @@ resource "kubernetes_deployment" "virtualbarcamp_www" {
             value = var.discord_oauth_bot_token
           }
         }
+
+        node_selector = {}
       }
     }
+  }
+
+  wait_for_rollout = false
+
+  lifecycle {
+    ignore_changes = [
+      spec[0].template[0].spec[0].active_deadline_seconds,
+      spec[0].template[0].spec[0].automount_service_account_token,
+      spec[0].template[0].spec[0].container[0].command,
+    ]
   }
 }
 
 resource "kubernetes_deployment" "virtualbarcamp_worker" {
   metadata {
     name = "virtualbarcamp-worker"
+
+    annotations = {}
+    labels      = {}
   }
 
   spec {
@@ -215,6 +238,11 @@ resource "kubernetes_deployment" "virtualbarcamp_worker" {
           }
 
           env {
+            name  = "APP_HOST"
+            value = var.app_hostname
+          }
+
+          env {
             name  = "DB_HOST"
             value = digitalocean_database_cluster.postgres.private_host
           }
@@ -240,13 +268,13 @@ resource "kubernetes_deployment" "virtualbarcamp_worker" {
           }
 
           env {
-            name  = "REDIS_HOST"
-            value = digitalocean_database_cluster.queue.private_host
+            name  = "DB_SSL_MODE"
+            value = "require"
           }
 
           env {
-            name  = "REDIS_PORT"
-            value = digitalocean_database_cluster.queue.port
+            name  = "REDIS_URI"
+            value = "rediss://${digitalocean_database_cluster.queue.user}:${digitalocean_database_cluster.queue.password}@${digitalocean_database_cluster.queue.private_host}:${digitalocean_database_cluster.queue.port}"
           }
 
           env {
@@ -264,14 +292,29 @@ resource "kubernetes_deployment" "virtualbarcamp_worker" {
             value = var.discord_oauth_bot_token
           }
         }
+
+        node_selector = {}
       }
     }
+  }
+
+  wait_for_rollout = false
+
+  lifecycle {
+    ignore_changes = [
+      spec[0].template[0].spec[0].active_deadline_seconds,
+      spec[0].template[0].spec[0].automount_service_account_token,
+      spec[0].template[0].spec[0].container[0].command,
+    ]
   }
 }
 
 resource "kubernetes_deployment" "virtualbarcamp_beat" {
   metadata {
     name = "virtualbarcamp-beat"
+
+    annotations = {}
+    labels      = {}
   }
 
   spec {
@@ -298,11 +341,16 @@ resource "kubernetes_deployment" "virtualbarcamp_beat" {
         container {
           name  = "www"
           image = "registry.gitlab.com/cnorthwood/virtualbarcamp:${var.app_version}"
-          args  = ["worker"]
+          args  = ["beat"]
 
           env {
             name  = "SECRET_KEY"
             value = random_string.django_secret.result
+          }
+
+          env {
+            name  = "APP_HOST"
+            value = var.app_hostname
           }
 
           env {
@@ -331,13 +379,13 @@ resource "kubernetes_deployment" "virtualbarcamp_beat" {
           }
 
           env {
-            name  = "REDIS_HOST"
-            value = digitalocean_database_cluster.queue.private_host
+            name  = "DB_SSL_MODE"
+            value = "require"
           }
 
           env {
-            name  = "REDIS_PORT"
-            value = digitalocean_database_cluster.queue.port
+            name  = "REDIS_URI"
+            value = "rediss://${digitalocean_database_cluster.queue.user}:${digitalocean_database_cluster.queue.password}@${digitalocean_database_cluster.queue.private_host}:${digitalocean_database_cluster.queue.port}"
           }
 
           env {
@@ -355,7 +403,19 @@ resource "kubernetes_deployment" "virtualbarcamp_beat" {
             value = var.discord_oauth_bot_token
           }
         }
+
+        node_selector = {}
       }
     }
+  }
+
+  wait_for_rollout = false
+
+  lifecycle {
+    ignore_changes = [
+      spec[0].template[0].spec[0].active_deadline_seconds,
+      spec[0].template[0].spec[0].automount_service_account_token,
+      spec[0].template[0].spec[0].container[0].command,
+    ]
   }
 }

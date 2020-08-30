@@ -1,5 +1,5 @@
 resource "digitalocean_database_cluster" "queue" {
-  name                 = "barcampmanchesterqueue"
+  name                 = "virtualbarcampqueue"
   engine               = "redis"
   version              = "5"
   size                 = "db-s-1vcpu-1gb"
@@ -12,6 +12,6 @@ resource "digitalocean_database_firewall" "queue_firewall" {
   cluster_id = digitalocean_database_cluster.queue.id
   rule {
     type  = "k8s"
-    value = digitalocean_kubernetes_cluster.barcampmanchester.id
+    value = digitalocean_kubernetes_cluster.virtualbarcamp.id
   }
 }

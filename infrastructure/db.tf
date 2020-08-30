@@ -1,5 +1,5 @@
 resource "digitalocean_database_cluster" "postgres" {
-  name                 = "barcampmanchesterdb"
+  name                 = "virtualbarcampdb"
   engine               = "pg"
   version              = "12"
   size                 = "db-s-1vcpu-1gb"
@@ -12,16 +12,16 @@ resource "digitalocean_database_firewall" "db_firewall" {
   cluster_id = digitalocean_database_cluster.postgres.id
   rule {
     type  = "k8s"
-    value = digitalocean_kubernetes_cluster.barcampmanchester.id
+    value = digitalocean_kubernetes_cluster.virtualbarcamp.id
   }
 }
 
 resource "digitalocean_database_db" "db" {
   cluster_id = digitalocean_database_cluster.postgres.id
-  name       = "barcampmanchester"
+  name       = "virtualbarcamp"
 }
 
 resource "digitalocean_database_user" "db" {
   cluster_id = digitalocean_database_cluster.postgres.id
-  name       = "barcampmanchester"
+  name       = "virtualbarcamp"
 }
