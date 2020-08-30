@@ -8,19 +8,19 @@ case "$1" in
     echo "$TLS_PRIVATE_KEY" > /etc/nginx/key.pem
 
     nginx
-    sudo -u nginx daphne -u /app/sock/daphne --proxy-headers virtualbarcamp.asgi:application 2>/dev/null
+    sudo -Eu nginx daphne -u /app/sock/daphne --proxy-headers virtualbarcamp.asgi:application 2>/dev/null
     ;;
 
   migrate)
-    sudo -u nginx ./manage.py migrate
+    sudo -Eu nginx ./manage.py migrate
     ;;
 
   worker)
-    sudo -u nginx celery -A virtualbarcamp worker -l info
+    sudo -Eu nginx celery -A virtualbarcamp worker -l info
     ;;
 
   beat)
-    sudo -u nginx celery -A virtualbarcamp beat -l info -S django --pidfile=/tmp/celerybeat.pid
+    sudo -Eu nginx celery -A virtualbarcamp beat -l info -S django --pidfile=/tmp/celerybeat.pid
     ;;
 
   *)
