@@ -43,8 +43,7 @@ App Tests:
     DB_USER: virtualbarcamp
     DB_PASSWORD: virtualbarcamp
     DB_NAME: virtualbarcamp
-    REDIS_HOST: redis
-    REDIS_PORT: 6379
+    REDIS_URI: redis://redis
   before_script:
     - poetry install
   script:

@@ -90,6 +90,7 @@ DATABASES = {
         "NAME": os.environ.get("DB_NAME"),
         "USER": os.environ.get("DB_USER"),
         "PASSWORD": os.environ.get("DB_PASSWORD"),
+        "OPTIONS": {"sslmode": os.environ.get("DB_SSL_MODE", "disable")},
     }
 }
 
@@ -97,14 +98,14 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [(os.environ.get("REDIS_HOST"), int(os.environ.get("REDIS_PORT", 6379)))],
+            "hosts": [os.environ.get("REDIS_URI")],
         },
     },
 }
 
 CELERY_RESULT_BACKEND = "django-db"
 CELERY_TASK_TRACK_STARTED = True
-CELERY_BROKER_URL = f"redis://{os.environ.get('REDIS_HOST')}:{os.environ.get('REDIS_PORT', 6379)}"
+CELERY_BROKER_URL = os.environ.get("REDIS_URI")
 CELERY_IMPORTS = [
     "virtualbarcamp.home.signals",
     "virtualbarcamp.accounts.signals",
