@@ -43,7 +43,7 @@ if settings.WEBPACK_DEV_SERVER_MANIFEST:
 
 
 else:
-    with open(os.path.join(settings.STATIC_ROOT), "manifest.json") as manifest_file:
+    with open(os.path.join(settings.STATIC_ROOT, "manifest.json")) as manifest_file:
         _assets = assets_from_manifest(json.load(manifest_file), settings.STATIC_URL, True)
 
     def load_assets():
