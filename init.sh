@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-case "$0" in
+case "$1" in
   www)
     echo "$TLS_CERTIFICATE" > /etc/nginx/cert.pem
     echo "$TLS_PRIVATE_KEY" > /etc/nginx/key.pem
