@@ -8,14 +8,14 @@
         <div class="container">
             <div class="navbar-brand">
                 <div class="navbar-item">
-                    <h1 class="title is-size-1"><img src="{% static "accounts/barcamplogo.png" %}" alt="BarCamp Manchester" style="max-height: 6rem"></h1>
+                    <h1 class="title is-size-1"><img src="{% static "accounts/barcamplogo.png" %}" alt="BarCamp Manchester" class="barcamp-logo"></h1>
                 </div>
             </div>
             <div class="navbar-menu is-active">
                 <div class="navbar-end">
                     <div class="navbar-item">
                         <div class="buttons">
-                            <span style="display: inline-flex; padding: calc(0.5em - 1px) 1em; margin-bottom: 0.5em;">{{ user.username }}</span>
+                            <span class="navbar-username">{{ user.username }}</span>
                             <a class="button is-light" href="{% url "logout" %}">
                                 Log out
                             </a>

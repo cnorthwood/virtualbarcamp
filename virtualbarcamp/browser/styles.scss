@@ -2,6 +2,16 @@ $primary: #fdca00;
 
 @import "~bulma";
 
+.barcamp-logo {
+  max-height: 6rem;
+}
+
+.navbar-username {
+  display: inline-flex;
+  margin-bottom: 0.5em;
+  padding: calc(0.5em - 1px) 1em;
+}
+
 .grid {
   th.grid__session,
   th.grid__room {

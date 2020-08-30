@@ -8,6 +8,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY", token_hex())
 DEBUG = os.environ.get("DEBUG") == "True"
 
 ALLOWED_HOSTS = [os.environ["APP_HOST"]] if "APP_HOST" in os.environ else []
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 INSTALLED_APPS = [
     "django.contrib.admin",
