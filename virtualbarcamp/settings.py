@@ -162,3 +162,4 @@ if DEBUG:
     CSP_CONNECT_SRC = ["'self'", "localhost:3000", "ws://localhost:3000"]
 else:
     CSP_INCLUDE_NONCE_IN = ["style-src"]
+    CSP_STYLE_SRC = ["'self'"]
