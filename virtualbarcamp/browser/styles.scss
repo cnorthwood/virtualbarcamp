@@ -4,6 +4,7 @@ $primary: #fdca00;
 
 .navbar-item img.barcamp-logo {
   max-height: 6rem;
+  max-width: calc(100vw - 24px);
 }
 
 .navbar-username {
@@ -24,7 +25,7 @@ $primary: #fdca00;
 
   .grid__slot {
     border: 1px solid $grey;
-    min-width: 400px;
+    min-width: 320px;
     height: 140px;
   }
 

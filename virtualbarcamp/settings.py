@@ -159,7 +159,8 @@ if DEBUG:
     CSP_DEFAULT_SRC = ["'self'", "localhost:3000"]
     CSP_SCRIPT_SRC = ["'self'", "localhost:3000", "'unsafe-inline'", "'unsafe-eval'"]
     CSP_STYLE_SRC = ["'self'", "localhost:3000", "'unsafe-inline'", "'unsafe-eval'"]
-    CSP_CONNECT_SRC = ["'self'", "localhost:3000", "ws://localhost:3000"]
+    CSP_CONNECT_SRC = ["'self'", "localhost:3000", "ws://localhost:3000", "ws://localhost:8000"]
 else:
     CSP_INCLUDE_NONCE_IN = ["style-src"]
     CSP_STYLE_SRC = ["'self'"]
+    CSP_CONNECT_SRC = ["'self'"] + [f"wss://{host}" for host in ALLOWED_HOSTS]

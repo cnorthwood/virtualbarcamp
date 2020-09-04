@@ -4,6 +4,7 @@ $primary: #FDCA00;
 
 .navbar-item img.barcamp-logo {
   max-height: 6rem;
+  max-width: calc(100vw - 24px);
 }
 
 .navbar-username {
