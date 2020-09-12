@@ -9,13 +9,16 @@ from virtualbarcamp.grid.models import Talk, Room, Slot, Session
 def save_room(sender, instance: Room, **kwargs):
     if getattr(instance, "_synced", False):
         return
-    sync_channels(instance)
+
+    if not settings.DISCORD_SYNC_DISABLED:
+        sync_channels(instance)
     instance._synced = True
     instance.save()
 
 
 def delete_room(sender, instance: Room, **kwargs):
-    delete_channels(instance)
+    if not settings.DISCORD_SYNC_DISABLED:
+        delete_channels(instance)
 
 
 def save_slot(sender, instance: Slot, **kwargs):
