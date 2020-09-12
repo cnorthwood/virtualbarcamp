@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db.models.signals import post_save, post_delete
 from graphene_subscriptions.signals import post_save_subscription, post_delete_subscription
 
@@ -21,7 +22,8 @@ def save_slot(sender, instance: Slot, **kwargs):
     if getattr(instance, "_synced", False):
         return
 
-    instance.sync_scheduled_action_timings()
+    if not settings.DISCORD_SYNC_DISABLED:
+        instance.sync_scheduled_action_timings()
 
     instance._synced = True
     instance.save()

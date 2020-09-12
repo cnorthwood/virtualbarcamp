@@ -180,6 +180,16 @@ resource "kubernetes_deployment" "virtualbarcamp_www" {
             name  = "DISCORD_OAUTH_BOT_TOKEN"
             value = var.discord_oauth_bot_token
           }
+
+          env {
+            name  = "DISCORD_GUILD_ID"
+            value = "721357132326502400"
+          }
+
+          env {
+            name  = "DISCORD_MODERATOR_ROLE_ID"
+            value = "741674771070320720"
+          }
         }
 
         node_selector = {}
@@ -291,6 +301,16 @@ resource "kubernetes_deployment" "virtualbarcamp_worker" {
             name  = "DISCORD_OAUTH_BOT_TOKEN"
             value = var.discord_oauth_bot_token
           }
+
+          env {
+            name  = "DISCORD_GUILD_ID"
+            value = "721357132326502400"
+          }
+
+          env {
+            name  = "DISCORD_MODERATOR_ROLE_ID"
+            value = "741674771070320720"
+          }
         }
 
         node_selector = {}
@@ -401,6 +421,16 @@ resource "kubernetes_deployment" "virtualbarcamp_beat" {
           env {
             name  = "DISCORD_OAUTH_BOT_TOKEN"
             value = var.discord_oauth_bot_token
+          }
+
+          env {
+            name  = "DISCORD_GUILD_ID"
+            value = "721357132326502400"
+          }
+
+          env {
+            name  = "DISCORD_MODERATOR_ROLE_ID"
+            value = "741674771070320720"
           }
         }
 

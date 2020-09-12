@@ -1,5 +1,6 @@
 import logging
 
+from celery import shared_task
 from django.conf import settings
 from django.contrib.auth import logout
 from django.contrib.auth.models import User
@@ -172,7 +173,6 @@ def delete_role(role_id: str):
 
 
 def sync_channels(room: Room):
-
     if not room.discord_category_id:
         room.discord_category_id = create_category(room.room_name)
     else:

@@ -44,6 +44,7 @@ App Tests:
     DB_PASSWORD: virtualbarcamp
     DB_NAME: virtualbarcamp
     REDIS_URI: redis://redis
+    DISCORD_SYNC_DISABLED: "True"
   before_script:
     - poetry install
   script:

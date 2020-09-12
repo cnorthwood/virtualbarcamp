@@ -78,6 +78,7 @@ services:
       <<: *app_config
       DB_HOST: test-db
       REDIS_URI: redis://test-redis
+      DISCORD_SYNC_DISABLED: "True"
     working_dir: /app
     command: bash -c 'poetry install --no-root && poetry run ptw virtualbarcamp -- --testmon'
 
