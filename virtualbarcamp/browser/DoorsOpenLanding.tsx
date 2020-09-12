@@ -29,10 +29,7 @@ const DoorsOpenLanding: FunctionComponent<{ gridOpenTime: string | null }> = ({ 
             <p>
               BarCamp Manchester 10 is taking place using Discord. Join our Discord server now to
               meet your fellow attendees in the lobby, and if you're presenting, you can find a test
-              room to check your technology in (using Discord's Go Live function). You can also form
-              a breakout room for discussions by saying <code>!breakout My Topic</code> in the lobby
-              (changing "My Topic" to the name of the breakout topic) to create a new breakout room
-              for smaller discussions.
+              room to check your technology in (using Discord's Go Live function).
             </p>
             <p className="has-text-centered">
               <InviteToDiscordButton className="is-primary is-large">
