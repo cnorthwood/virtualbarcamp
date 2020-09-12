@@ -2,6 +2,17 @@ from django.contrib import admin
 from django.forms import ModelForm, ModelMultipleChoiceField
 
 from virtualbarcamp.grid.models import Room, Session, Slot, Talk
+from virtualbarcamp.grid.tasks import slot_ends, slot_starts
+
+
+def force_slot_start(model_admin, request, slots):
+    for slot in slots:
+        slot_starts(slot.id)
+
+
+def force_slot_end(model_admin, request, slots):
+    for slot in slots:
+        slot_ends(slot.id)
 
 
 @admin.register(Room)
@@ -37,7 +48,7 @@ class SessionAdmin(admin.ModelAdmin):
 
 @admin.register(Slot)
 class SlotAdmin(admin.ModelAdmin):
-    pass
+    actions = [force_slot_start, force_slot_end]
 
 
 @admin.register(Talk)
