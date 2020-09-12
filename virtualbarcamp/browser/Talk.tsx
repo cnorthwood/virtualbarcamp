@@ -66,7 +66,7 @@ const Talk: FunctionComponent<{
   const [updateWindowOpened, setUpdateWindowOpened] = useState<boolean>(false);
 
   const closeUpdateWindow = useCallback(
-    (ev: MouseEvent<HTMLButtonElement> | KeyboardEvent) => {
+    (ev: MouseEvent<HTMLButtonElement>) => {
       ev.preventDefault();
       setUpdateWindowOpened(false);
     },
@@ -74,9 +74,14 @@ const Talk: FunctionComponent<{
   );
 
   useEffect(() => {
-    document.addEventListener("keydown", closeUpdateWindow);
-    return () => document.removeEventListener("keydown", closeUpdateWindow);
-  }, [closeUpdateWindow]);
+    const closeIfEscapeKey = (ev: KeyboardEvent) => {
+      if (ev.key === "Esc" || ev.key === "Escape") {
+        setUpdateWindowOpened(false);
+      }
+    };
+    document.addEventListener("keydown", closeIfEscapeKey);
+    return () => document.removeEventListener("keydown", closeIfEscapeKey);
+  }, [setUpdateWindowOpened]);
 
   const [newTitle, setNewTitle] = useState<string>(title);
   const [newIsOpenDiscussion, setNewIsOpenDiscussion] = useState<boolean>(isOpenDiscussion);
@@ -116,7 +121,6 @@ const Talk: FunctionComponent<{
 
   const updateTalk = useCallback(
     (ev: FormEvent<HTMLFormElement>) => {
-      console.log("updating talk");
       ev.preventDefault();
       if (ev.currentTarget.reportValidity()) {
         updateTalkMutation().then(() => setUpdateWindowOpened(false));

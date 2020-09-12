@@ -9,7 +9,6 @@ const SpeakersControl: FunctionComponent<{
   const addSpeaker = useCallback(
     (ev: MouseEvent<HTMLButtonElement>) => {
       ev.preventDefault();
-      console.log([...speakers, addSpeakerRef.current!.value]);
       onChange([...speakers, addSpeakerRef.current!.value]);
     },
     [addSpeakerRef, speakers, onChange],
