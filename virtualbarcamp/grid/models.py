@@ -4,7 +4,7 @@ from django.db.models import (
     CharField,
     ManyToManyField,
     ForeignKey,
-CASCADE,
+    CASCADE,
     SET_NULL,
     DateTimeField,
     OneToOneField,
