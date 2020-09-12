@@ -8,7 +8,7 @@ services:
       POSTGRES_USER: virtualbarcamp
       POSTGRES_PASSWORD: virtualbarcamp
 
-  test_db:
+  test-db:
     image: postgres:12
     restart: unless-stopped
     environment:
@@ -20,7 +20,7 @@ services:
     image: redis:5
     restart: unless-stopped
 
-  test_redis:
+  test-redis:
     image: redis:5
     restart: unless-stopped
 
@@ -72,12 +72,12 @@ services:
     volumes:
       - .:/app
     depends_on:
-      - test_redis
-      - test_db
+      - test-redis
+      - test-db
     environment:
       <<: *app_config
-      DB_HOST: test_db
-      REDIS_URI: redis://test_redis
+      DB_HOST: test-db
+      REDIS_URI: redis://test-redis
     working_dir: /app
     command: bash -c 'poetry install --no-root && poetry run ptw virtualbarcamp -- --testmon'
 
