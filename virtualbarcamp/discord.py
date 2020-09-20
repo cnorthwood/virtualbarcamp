@@ -112,7 +112,7 @@ def presenter_only_permissions(presenter_role_id: str):
     ]
 
 
-def create_voice_channel(name: str, parent: str, presenter_role_id: str):
+def create_voice_channel(name: str, parent: str, presenter_role_id: (str, None) = None):
     response = requests.post(
         f"https://discord.com/api/guilds/{settings.DISCORD_GUILD_ID}/channels",
         headers={"authorization": f"Bot {settings.DISCORD_BOT_TOKEN}"},
@@ -120,7 +120,9 @@ def create_voice_channel(name: str, parent: str, presenter_role_id: str):
             "name": name,
             "type": 2,
             "parent_id": parent,
-            "permission_overwrites": presenter_only_permissions(presenter_role_id),
+            "permission_overwrites": []
+            if presenter_role_id is None
+            else presenter_only_permissions(presenter_role_id),
         },
     )
     response.raise_for_status()

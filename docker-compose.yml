@@ -117,3 +117,18 @@ services:
     command: bash -c 'poetry install --no-root && poetry run celery -A virtualbarcamp beat -l info -S django --pidfile=/tmp/celerybeat.pid'
     logging:
       driver: "none"
+
+  bot:
+    build:
+      context: .
+      target: dev-base
+    restart: unless-stopped
+    volumes:
+      - .:/app
+    depends_on:
+      - redis
+      - db
+    environment:
+      <<: *app_config
+    working_dir: /app
+    command: bash -c 'poetry install --no-root && poetry run python -mvirtualbarcamp.bot'

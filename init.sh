@@ -23,6 +23,10 @@ case "$1" in
     sudo -Eu nginx celery -A virtualbarcamp beat -l info -S django --pidfile=/tmp/celerybeat.pid
     ;;
 
+  bot)
+    sudo -Eu nginx python -mvirtualbarcamp.bot
+    ;;
+
   *)
     echo "Usage: $0 {www|worker|beat}"
 esac

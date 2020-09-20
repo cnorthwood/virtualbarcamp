@@ -24,15 +24,21 @@ the rooms.
 
 ## Dev Quick Start
 
-You will need to obtain an OAuth2 secret for Discord to develop this. You can
-either [grab your own](https://discord.com/developers/docs/topics/oauth2), and
-then create a `.env` file at the root of the project with content like:
+You will need to create a Discord server for your event, and then obtain an
+OAuth2 secret for Discord to develop this. You can either
+[grab your own](https://discord.com/developers/docs/topics/oauth2), and then
+create a `.env` file at the root of the project with content like:
 
 ```
 DISCORD_OAUTH_CLIENT_ID=123456
 DISCORD_OAUTH_CLIENT_SECRET=abcdef
 DISCORD_OAUTH_BOT_TOKEN=foobarbaz
+DISCORD_GUILD_ID=721357132326502400
+DISCORD_MODERATOR_ROLE_ID=741674771070320720
 ```
+
+You should also create a Discord role that corresponds to the role your
+volunteers will have.
 
 Or, if you know Chris and he trusts you, he can share the BarCamp Manchester
 ones with you privately.
@@ -50,7 +56,12 @@ Now, you can start a local dev environment:
 
 1. Once you have signed in via Discord, you will only have a regular level of
    access
-2. The first admin will need to obtain a shell: `docker exec -it virtualbarcamp_app_1 poetry run ./manage.py shell`
+2. The first admin will need to obtain a shell:
+ * For the dev environment: `docker exec -it virtualbarcamp_app_1 poetry run ./manage.py shell`
+ * For the live environment:<br>
+   `doctl kubernetes cluster kubeconfig save virtualbarcamp` (to log in to the cluster)<br>
+   `kubectl get pod` and find the name of the pod starting `virtualbarcamp-www`<br>
+   `kubectl exec virtualbarcamp-www-<pod-full-name> ./manage.py shell`
 3. Run this, varying your username appropriately:
    ```python
    from django.contrib.auth.models import User
@@ -62,8 +73,9 @@ Now, you can start a local dev environment:
 4. You will now have access to http://localhost:8000/admin/. You can use the
    admin screen to give other people staff/superuser access to the admin.
 
-The process is the same for live, with different mechanisms for obtaining a
-shell and the URL for the admin.
+For live, obtain a shell like so:
+
+
 
 ### Architectural Overview
 
@@ -85,13 +97,33 @@ be started with multiple invocations to take on the key roles.
 
 ### Deploying
 
-_TBC_
+* Install Terraform and create a DigitalOcean account, obtaining a token.
+* Install doctl and then `doctl auth init` using your DO token.
+* Create a GitLab token with the read_registry permission
+* Create a `infrastructure/secrets.tfvars` file that looks a bit like:
+  ```
+  do_token                     = "..."
+  gitlab_deploy_token_username = "..."
+  gitlab_deploy_token_password = "..."
+  discord_oauth_client_id      = "..."
+  discord_oauth_client_secret  = "..."
+  discord_oauth_bot_token      = "..."
+  discord_guild_id             = "..."
+  discord_moderator_role_id    = "..."
+  ```
+* `terraform init` (on first run only)
+* `terraform apply -var-file secrets.tfvars` and enter the version of the app
+  you wish to deploy
+* If you have any migrations you need to apply, then you can run these like so:<br>
+  `doctl kubernetes cluster kubeconfig save virtualbarcamp` (to log in to the cluster)<br>
+  `kubectl get pod` and find the name of the pod starting `virtualbarcamp-www`<br>
+  `kubectl exec virtualbarcamp-www-<pod-full-name> /app/init.sh migrate`
 
 ## Event Runbook
 
 ### How the event works
 
-_TBC_
+<iframe src="https://player.vimeo.com/video/457708988" width="640" height="360" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
 
 ### Opening doors
 
@@ -121,7 +153,16 @@ of the periodic task from the list of periodic tasks in the admin.
 
 ### Defining your grid
 
-_TBC_
+Sign into the grid using an account which has staff permissions, and then
+visit `/admin/`. Create the rooms you want to use - this will automatically
+create the correct channels in Discord.
+
+Now, in the Django admin, create the sessions you wish to have. If you want a
+session to be one that people can drop cards into, you must select the rooms
+you want to be available for those sessions. If you want the session to be a
+placeholder in the schedule (e.g., to show lunch break, etc), then do not
+select any rooms and instead complete the "Event" field showing the event
+which happens at this time.
 
 ### Moderation
 
@@ -134,4 +175,6 @@ Discord server if they have joined it.
 
 #### Removing cards from the grid
 
-_TBC_
+Sign into the grid using an account which has staf permissions, and then
+visit `/admin/`. In the Django admin, go into the talks field, find the 
+talk you want and then delete it.
