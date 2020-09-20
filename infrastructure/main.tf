@@ -6,6 +6,21 @@ provider "digitalocean" {
   token = var.do_token
 }
 
+variable "workers" {
+  type    = number
+  default = 1
+}
+
+variable "node_size" {
+  type    = string
+  default = "s-1vcpu-2gb"
+}
+
+variable "do_region" {
+  type    = string
+  default = "lon1"
+}
+
 data "digitalocean_kubernetes_versions" "versions" {}
 
 provider "kubernetes" {
@@ -19,19 +34,19 @@ provider "kubernetes" {
 
 resource "digitalocean_vpc" "vpc" {
   name   = "virtualbarcamp"
-  region = "lon1"
+  region = var.do_region
 }
 
 resource "digitalocean_kubernetes_cluster" "virtualbarcamp" {
   name         = "virtualbarcamp"
-  region       = "lon1"
+  region       = var.do_region
   version      = data.digitalocean_kubernetes_versions.versions.latest_version
   auto_upgrade = true
   vpc_uuid     = digitalocean_vpc.vpc.id
 
   node_pool {
     name       = "virtualbarcamp"
-    size       = "s-1vcpu-2gb"
-    node_count = 1
+    size       = var.node_size
+    node_count = var.workers
   }
 }

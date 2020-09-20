@@ -3,11 +3,6 @@ variable "www_replicas" {
   default = 1
 }
 
-variable "worker_replicas" {
-  type    = number
-  default = 1
-}
-
 variable "app_version" {
   type = string
 }
@@ -94,7 +89,7 @@ resource "kubernetes_deployment" "virtualbarcamp_www" {
   }
 
   spec {
-    replicas = var.www_replicas
+    replicas = var.workers
 
     selector {
       match_labels = {
@@ -225,7 +220,7 @@ resource "kubernetes_deployment" "virtualbarcamp_worker" {
   }
 
   spec {
-    replicas = var.worker_replicas
+    replicas = 1
 
     selector {
       match_labels = {

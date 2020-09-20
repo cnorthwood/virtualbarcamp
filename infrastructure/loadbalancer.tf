@@ -3,13 +3,11 @@ provider "acme" {
 }
 
 variable "app_hostname" {
-  type    = string
-  default = "online.barcampmanchester.co.uk"
+  type = string
 }
 
 variable "letsencrypt_account_email" {
-  type    = string
-  default = "chris@barcampmanchester.co.uk"
+  type = string
 }
 
 resource "digitalocean_domain" "domain" {

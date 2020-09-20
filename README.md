@@ -75,8 +75,6 @@ Now, you can start a local dev environment:
 
 For live, obtain a shell like so:
 
-
-
 ### Architectural Overview
 
 The app is a Django app, with the core grid being served as a rich React app
@@ -97,27 +95,35 @@ be started with multiple invocations to take on the key roles.
 
 ### Deploying
 
-* Install Terraform and create a DigitalOcean account, obtaining a token.
-* Install doctl and then `doctl auth init` using your DO token.
-* Create a GitLab token with the read_registry permission
-* Create a `infrastructure/secrets.tfvars` file that looks a bit like:
-  ```
-  do_token                     = "..."
-  gitlab_deploy_token_username = "..."
-  gitlab_deploy_token_password = "..."
-  discord_oauth_client_id      = "..."
-  discord_oauth_client_secret  = "..."
-  discord_oauth_bot_token      = "..."
-  discord_guild_id             = "..."
-  discord_moderator_role_id    = "..."
-  ```
-* `terraform init` (on first run only)
-* `terraform apply -var-file secrets.tfvars` and enter the version of the app
-  you wish to deploy
-* If you have any migrations you need to apply, then you can run these like so:<br>
-  `doctl kubernetes cluster kubeconfig save virtualbarcamp` (to log in to the cluster)<br>
-  `kubectl get pod` and find the name of the pod starting `virtualbarcamp-www`<br>
-  `kubectl exec virtualbarcamp-www-<pod-full-name> /app/init.sh migrate`
+1. Install Terraform and create a DigitalOcean account, obtaining a token.
+2. Install doctl and then `doctl auth init` using your DO token.
+3. Add NS records for the subdomain you want to `ns{1,2,3}.digitalocean.com`
+4. Create a GitLab token with the read_registry permission
+5. Create a `infrastructure/secrets.tfvars` file that looks a bit like:
+   ```
+   do_token                     = "..."
+   gitlab_deploy_token_username = "..."
+   gitlab_deploy_token_password = "..."
+   discord_oauth_client_id      = "..."
+   discord_oauth_client_secret  = "..."
+   discord_oauth_bot_token      = "..."
+   discord_guild_id             = "..."
+   discord_moderator_role_id    = "..."
+   app_hostname                 = "online.barcampmanchester.co.uk"
+   letsencrypt_account_email    = "you@myemail.com"
+   ```
+6. `terraform init` (on first run only)
+7. `terraform apply -var-file secrets.tfvars` and enter the version of the app
+   you wish to deploy
+8. If you have any migrations you need to apply, then you can run these like so:<br>
+   `doctl kubernetes cluster kubeconfig save virtualbarcamp` (to log in to the cluster)<br>
+   `kubectl get pod` and find the name of the pod starting `virtualbarcamp-www`<br>
+   `kubectl exec virtualbarcamp-www-<pod-full-name> /app/init.sh migrate`
+
+If you need to scale, you can do so by overriding the default number of
+workers, or default node size like so:
+
+    terraform apply -var-file secrets.tfvars
 
 ## Event Runbook
 
