@@ -35,6 +35,7 @@ DISCORD_OAUTH_CLIENT_SECRET=abcdef
 DISCORD_OAUTH_BOT_TOKEN=foobarbaz
 DISCORD_GUILD_ID=721357132326502400
 DISCORD_MODERATOR_ROLE_ID=741674771070320720
+DISCORD_WELCOME_CHANNEL_ID=721357132787875932
 ```
 
 You should also create a Discord role that corresponds to the role your
@@ -109,6 +110,7 @@ be started with multiple invocations to take on the key roles.
    discord_oauth_bot_token      = "..."
    discord_guild_id             = "..."
    discord_moderator_role_id    = "..."
+   discord_welcome_channel_id   = "..."
    app_hostname                 = "online.barcampmanchester.co.uk"
    letsencrypt_account_email    = "you@myemail.com"
    ```

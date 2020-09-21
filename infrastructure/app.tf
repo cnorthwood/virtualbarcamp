@@ -31,6 +31,10 @@ variable "discord_guild_id" {
   type = string
 }
 
+variable "discord_welcome_channel_id" {
+  type = string
+}
+
 variable "discord_moderator_role_id" {
   type = string
 }
@@ -193,6 +197,11 @@ resource "kubernetes_deployment" "virtualbarcamp_www" {
             name  = "DISCORD_MODERATOR_ROLE_ID"
             value = var.discord_moderator_role_id
           }
+
+          env {
+            name  = "DISCORD_WELCOME_CHANNEL_ID"
+            value = var.discord_welcome_channel_id
+          }
         }
 
         node_selector = {}
@@ -313,6 +322,11 @@ resource "kubernetes_deployment" "virtualbarcamp_worker" {
           env {
             name  = "DISCORD_MODERATOR_ROLE_ID"
             value = var.discord_moderator_role_id
+          }
+
+          env {
+            name  = "DISCORD_WELCOME_CHANNEL_ID"
+            value = var.discord_welcome_channel_id
           }
         }
 
@@ -435,6 +449,11 @@ resource "kubernetes_deployment" "virtualbarcamp_beat" {
             name  = "DISCORD_MODERATOR_ROLE_ID"
             value = var.discord_moderator_role_id
           }
+
+          env {
+            name  = "DISCORD_WELCOME_CHANNEL_ID"
+            value = var.discord_welcome_channel_id
+          }
         }
 
         node_selector = {}
@@ -555,6 +574,11 @@ resource "kubernetes_deployment" "virtualbarcamp_bot" {
           env {
             name  = "DISCORD_MODERATOR_ROLE_ID"
             value = var.discord_moderator_role_id
+          }
+
+          env {
+            name  = "DISCORD_WELCOME_CHANNEL_ID"
+            value = var.discord_welcome_channel_id
           }
         }
 
