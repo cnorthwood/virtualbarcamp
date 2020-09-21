@@ -42,6 +42,6 @@ class GlobalSettings(Model):
 
     def _task_time(self, task):
         try:
-            return PeriodicTask.objects.get(task=task, clocked__enabled=True).clocked.clocked_time
+            return PeriodicTask.objects.get(task=task, enabled=True).clocked.clocked_time
         except PeriodicTask.DoesNotExist:
             return None
