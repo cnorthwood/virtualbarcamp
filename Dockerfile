@@ -1,7 +1,7 @@
 FROM fedora:32 as dev-base
 
 RUN dnf upgrade -y && \
-        dnf install -y poetry python3 python3-pip python3-devel python3-setuptools file gcc gcc-c++ make automake autoconf libtool openssl-devel pcre-devel
+        dnf install -y poetry python3 python3-pip python3-devel python3-setuptools file gcc gcc-c++ make automake autoconf libtool openssl-devel pcre-devel git
 RUN mkdir /build
 WORKDIR /build
 RUN curl -Lo watchman.tar.gz https://github.com/facebook/watchman/archive/v4.9.0.tar.gz && \
