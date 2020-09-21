@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react";
+import React, { FunctionComponent, useCallback } from "react";
 import { gql, useMutation } from "@apollo/client";
 
 import { inviteToDiscord } from "./graphql/inviteToDiscord";
@@ -17,6 +17,10 @@ const InviteToDiscordButton: FunctionComponent<{ className?: string }> = ({
     INVITE_TO_DISCORD_MUTATION,
   );
 
+  const clickButton = useCallback(() => {
+    inviteToDiscordMutation();
+  }, [inviteToDiscordMutation]);
+
   if (error) {
     return (
       <button className="button is-danger" disabled>
@@ -28,7 +32,7 @@ const InviteToDiscordButton: FunctionComponent<{ className?: string }> = ({
     <button
       className={`button ${className ?? ""} ${loading ? "is-loading" : ""}`}
       disabled={called}
-      onClick={() => inviteToDiscordMutation()}
+      onClick={clickButton}
     >
       {called ? "Invited" : children}
     </button>

@@ -4,7 +4,7 @@ import { gql, useQuery } from "@apollo/client";
 import { isOnDiscord } from "./graphql/isOnDiscord";
 import InviteToDiscordButton from "./InviteToDiscordButton";
 
-const IS_ON_DISCORD_QUERY = gql`
+export const IS_ON_DISCORD_QUERY = gql`
   query isOnDiscord {
     isOnDiscord
   }
