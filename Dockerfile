@@ -21,12 +21,12 @@ COPY . /app
 WORKDIR /app
 RUN yarn
 RUN yarn build
-RUN poetry export -f requirements.txt -o /app/requirements.txt
+RUN poetry export -f requirements.txt -o /app/requirements.txt --without-hashes
 
 FROM fedora:32
 
 RUN dnf upgrade -y && \
-        dnf install -y nginx python3-pip gcc python3-devel
+        dnf install -y nginx python3-pip gcc python3-devel git
 COPY --from=builder /app/requirements.txt /app/manage.py /app/init.sh /app/
 COPY --from=builder /app/virtualbarcamp/ /app/virtualbarcamp/
 COPY --from=builder /app/build/ /app/build/
