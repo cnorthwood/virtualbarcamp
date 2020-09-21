@@ -93,9 +93,21 @@ def presenter_only_permissions(presenter_role_id: str):
     moderator_role_id = settings.DISCORD_MODERATOR_ROLE_ID
 
     return [
-        {"id": everyone_role_id, "type": "role", "deny": STREAM_PERMISSION | SPEAK_PERMISSION,},
-        {"id": moderator_role_id, "type": "role", "allow": STREAM_PERMISSION | SPEAK_PERMISSION,},
-        {"id": presenter_role_id, "type": "role", "allow": STREAM_PERMISSION | SPEAK_PERMISSION,},
+        {
+            "id": everyone_role_id,
+            "type": "role",
+            "deny": STREAM_PERMISSION | SPEAK_PERMISSION,
+        },
+        {
+            "id": moderator_role_id,
+            "type": "role",
+            "allow": STREAM_PERMISSION | SPEAK_PERMISSION,
+        },
+        {
+            "id": presenter_role_id,
+            "type": "role",
+            "allow": STREAM_PERMISSION | SPEAK_PERMISSION,
+        },
     ]
 
 
