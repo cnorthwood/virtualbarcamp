@@ -26,6 +26,7 @@ Browser Tests:
   cache:
     paths:
       - node_modules/
+    key: browser-tests
 
 App Tests:
   stage: test
@@ -54,6 +55,7 @@ App Tests:
   cache:
     paths:
       - .venv
+    key: app-tests
 
 Build image:
   stage: build
