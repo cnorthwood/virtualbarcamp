@@ -12,7 +12,7 @@ channels = "^2.4.0"
 channels-redis = "^3.0.1"
 daphne = "^2.5.0"
 django = {extras = ["argon2"], version = "^3.0.6"}
-django-celery-beat = "^2.0.0"
+django-celery-beat = { git = "https://github.com/celery/django-celery-beat", rev = "dba6e43d8d0abaaaa78b07e66a50fb2da8fd74af" }
 django-celery-results = "^1.2.1"
 django-csp = "^3.6"
 graphene-django = "^2.10.1"

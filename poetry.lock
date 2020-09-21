@@ -428,6 +428,10 @@ celery = "*"
 django-timezone-field = ">=4.0,<5.0"
 python-crontab = ">=2.3.4"
 
+[package.source]
+reference = "dba6e43d8d0abaaaa78b07e66a50fb2da8fd74af"
+type = "git"
+url = "https://github.com/celery/django-celery-beat"
 [[package]]
 category = "main"
 description = "Celery result backends for Django."
@@ -1254,7 +1258,7 @@ test = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 
 [metadata]
-content-hash = "ffa8439f73d1425647343c1ab008220024e509c63c1268a904ab75f3f2187c96"
+content-hash = "e62552a16ec4b6cae9700c08bab80a212a28533bd7dc290df4ca04d67ab36897"
 python-versions = "^3.8"
 
 [metadata.files]
@@ -1484,10 +1488,7 @@ django = [
     {file = "Django-3.1.1-py3-none-any.whl", hash = "sha256:b5fbb818e751f660fa2d576d9f40c34a4c615c8b48dd383f5216e609f383371f"},
     {file = "Django-3.1.1.tar.gz", hash = "sha256:59c8125ca873ed3bdae9c12b146fbbd6ed8d0f743e4cf5f5817af50c51f1fc2f"},
 ]
-django-celery-beat = [
-    {file = "django-celery-beat-2.0.0.tar.gz", hash = "sha256:fdf1255eecfbeb770c6521fe3e69989dfc6373cd5a7f0fe62038d37f80f47e48"},
-    {file = "django_celery_beat-2.0.0-py2.py3-none-any.whl", hash = "sha256:fe0b2a1b31d4a6234fea4b31986ddfd4644a48fab216ce1843f3ed0ddd2e9097"},
-]
+django-celery-beat = []
 django-celery-results = [
     {file = "django_celery_results-1.2.1-py2.py3-none-any.whl", hash = "sha256:a29ab580f0e38c66c39f51cc426bbdbb2a391b8cc0867df9dea748db2c961db2"},
     {file = "django_celery_results-1.2.1.tar.gz", hash = "sha256:e390f70cc43bbc2cd7c8e4607dc29ab6211a2ab968f93677583f0160921f670c"},

@@ -2,7 +2,7 @@ import logging
 
 import discord
 from asgiref.sync import sync_to_async
-from discord import AllowedMentions
+from discord import AllowedMentions, Message, Member
 
 from django.conf import settings
 from virtualbarcamp.discord import create_voice_channel, create_text_channel
@@ -16,7 +16,7 @@ class BarCampBot(discord.Client):
     async def on_ready(self):
         LOGGER.info(f"Connected to Discord as {self.user}")
 
-    async def on_message(self, message):
+    async def on_message(self, message: Message):
         if message.content.startswith("!breakout"):
             args = message.content.split(" ")
             if len(args) < 3:
@@ -47,25 +47,14 @@ class BarCampBot(discord.Client):
                 ).first()
             )()
             if room:
-                for channel in self.voice_channels:
+                for channel in message.guild.voice_channels:
                     if channel.id == room.discord_presentation_channel_id:
                         for member in channel.members:
                             await member.move_to(None)
 
-    async def on_member_join(self, member):
+    async def on_member_join(self, member: Member):
         if settings.DISCORD_WELCOME_CHANNEL_ID:
             self.get_channel(settings.DISCORD_WELCOME_CHANNEL_ID).send(
                 f"Welcome <@{member.id}>!",
                 allowed_mentions=AllowedMentions(users=[member.id]),
             )
-
-    async def on_voice_state_update(self, member, before, after):
-        if before.channel is not None:
-            breakout_category_id = await sync_to_async(
-                lambda: GlobalSettings.objects.first().get_or_create_breakout_category_id()
-            )()
-            if (
-                before.channel.category_id == breakout_category_id
-                and len(before.channel.members) == 0
-            ):
-                await before.channel.delete(reason="Empty breakout room")
