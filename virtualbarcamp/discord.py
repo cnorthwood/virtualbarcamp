@@ -89,26 +89,13 @@ def create_text_channel(name: str, parent_id: str):
 def presenter_only_permissions(presenter_role_id: str):
     STREAM_PERMISSION = 0x00000200
     SPEAK_PERMISSION = 0x00200000
-    CONNECT_PERMISSION = 0x00100000
     everyone_role_id = settings.DISCORD_GUILD_ID
     moderator_role_id = settings.DISCORD_MODERATOR_ROLE_ID
 
     return [
-        {
-            "id": everyone_role_id,
-            "type": "role",
-            "deny": CONNECT_PERMISSION | STREAM_PERMISSION | SPEAK_PERMISSION,
-        },
-        {
-            "id": moderator_role_id,
-            "type": "role",
-            "allow": CONNECT_PERMISSION | STREAM_PERMISSION | SPEAK_PERMISSION,
-        },
-        {
-            "id": presenter_role_id,
-            "type": "role",
-            "allow": CONNECT_PERMISSION | STREAM_PERMISSION | SPEAK_PERMISSION,
-        },
+        {"id": everyone_role_id, "type": "role", "deny": STREAM_PERMISSION | SPEAK_PERMISSION,},
+        {"id": moderator_role_id, "type": "role", "allow": STREAM_PERMISSION | SPEAK_PERMISSION,},
+        {"id": presenter_role_id, "type": "role", "allow": STREAM_PERMISSION | SPEAK_PERMISSION,},
     ]
 
 
@@ -239,6 +226,23 @@ def limit_channel_to_presenters(channel_id: str, presenter_role_id: str):
     response.raise_for_status()
 
 
+def close_channel(channel_id: str):
+    CONNECT_PERMISSION = 0x00100000
+    everyone_role_id = settings.DISCORD_GUILD_ID
+    moderator_role_id = settings.DISCORD_MODERATOR_ROLE_ID
+    response = requests.patch(
+        f"https://discord.com/api/channels/{channel_id}",
+        headers={"authorization": f"Bot {settings.DISCORD_BOT_TOKEN}"},
+        json={
+            "permission_overwrites": [
+                {"id": everyone_role_id, "type": "role", "deny": CONNECT_PERMISSION},
+                {"id": moderator_role_id, "type": "role", "allow": CONNECT_PERMISSION},
+            ]
+        },
+    )
+    response.raise_for_status()
+
+
 def get_users_with_role(role_id: str):
     # TODO: handle more than 1000 members
     response = requests.get(
@@ -286,6 +290,9 @@ def start_slot(slot: Slot):
             add_role_to_user(slot.room.discord_presenter_role_id, slot.talk.owner)
             for speaker in slot.talk.other_speakers.all():
                 add_role_to_user(slot.room.discord_presenter_role_id, speaker)
+            limit_channel_to_presenters(
+                slot.room.discord_presentation_channel_id, slot.room.discord_presenter_role_id
+            )
         send_message(slot.room.discord_discussion_channel_id, f"Starting now! {slot.talk.title}")
     except Slot.talk.RelatedObjectDoesNotExist:
         pass
@@ -294,9 +301,7 @@ def start_slot(slot: Slot):
 def end_slot(slot: Slot):
     for user_id in get_users_with_role(slot.room.discord_presenter_role_id):
         remove_role_from_user(slot.room.discord_presenter_role_id, user_id)
-    limit_channel_to_presenters(
-        slot.room.discord_presentation_channel_id, slot.room.discord_presenter_role_id
-    )
+    close_channel(slot.room.discord_presentation_channel_id)
     try:
         send_message(
             slot.room.discord_discussion_channel_id,

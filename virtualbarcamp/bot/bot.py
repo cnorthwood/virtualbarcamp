@@ -60,7 +60,7 @@ class BarCampBot(discord.Client):
             )
 
     async def on_voice_state_update(self, member, before, after):
-        if before.channel is not None and after.channel is None:
+        if before.channel is not None:
             breakout_category_id = await sync_to_async(
                 lambda: GlobalSettings.objects.first().get_or_create_breakout_category_id()
             )()
