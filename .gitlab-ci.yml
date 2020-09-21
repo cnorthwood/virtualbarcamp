@@ -46,7 +46,7 @@ App Tests:
     REDIS_URI: redis://redis
     DISCORD_SYNC_DISABLED: "True"
   before_script:
-    - poetry config settings.virtualenvs.in-project true
+    - poetry config virtualenvs.in-project true
     - poetry install
   script:
     - poetry run pytest virtualbarcamp
@@ -54,7 +54,6 @@ App Tests:
   cache:
     paths:
       - .venv
-    key: "${CI_COMMIT_REF_SLUG}"
 
 Build image:
   stage: build
