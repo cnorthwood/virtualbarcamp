@@ -1,6 +1,9 @@
+from datetime import datetime
+
 from django.contrib.auth.models import User
 from django.db import IntegrityError, transaction
 from graphene import ObjectType, Field, NonNull, ID, String, List, Boolean
+from pytz import utc
 
 from virtualbarcamp.graphql.queries.grid import SlotType, TalkType
 from virtualbarcamp.grid.models import Talk, Slot
@@ -39,6 +42,9 @@ class GridMutation(ObjectType):
         if info.context.user != slot.talk.owner:
             raise ValueError("Not authorised")
 
+        if slot.session.end_time < datetime.now(tz=utc):
+            raise ValueError("Session has already ended")
+
         slot.talk.delete()
         slot.refresh_from_db()
 
@@ -49,6 +55,9 @@ class GridMutation(ObjectType):
         global_settings = GlobalSettings.objects.first()
         if global_settings.event_state not in ("GRID_OPEN",):
             raise ValueError("Can not add talks when grid is not open")
+
+        if Slot.objects.get(id=slot_id).session.end_time < datetime.now(tz=utc):
+            raise ValueError("Session has already ended")
 
         with transaction.atomic():
             try:
@@ -78,6 +87,9 @@ class GridMutation(ObjectType):
         if info.context.user != talk.owner:
             raise ValueError("Not authorised")
 
+        if talk.slot.session.start_time < datetime.now(tz=utc):
+            raise ValueError("Talk has already started")
+
         old_slot = talk.slot
         talk.slot_id = to_slot
         with transaction.atomic():
@@ -96,6 +108,9 @@ class GridMutation(ObjectType):
         talk = Talk.objects.get(id=talk_id)
         if info.context.user != talk.owner:
             raise ValueError("Not authorised")
+
+        if talk.slot.session.end_time < datetime.now(tz=utc):
+            raise ValueError("Session has already ended")
 
         talk.title = title
         talk.open_discussion = is_open_discussion

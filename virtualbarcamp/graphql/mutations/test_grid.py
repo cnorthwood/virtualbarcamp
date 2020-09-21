@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.contrib.auth.models import User
 import pytest
@@ -14,8 +14,8 @@ def _create_slot():
     room = Room.objects.create(room_name="Where it happens")
     session = Session.objects.create(
         session_name="Talks",
-        start_time=datetime(2020, 1, 1, 12, 0, 0, tzinfo=utc),
-        end_time=datetime(2020, 1, 1, 12, 30, 0, tzinfo=utc),
+        start_time=datetime.now(tz=utc) + timedelta(minutes=30),
+        end_time=datetime.now(tz=utc) + timedelta(hours=1),
     )
     return Slot.objects.create(room=room, session=session)
 
@@ -35,6 +35,26 @@ def test_updating_a_talk_fails_unless_grid_is_open():
     _set_global_settings(EventState.DOORS_OPEN)
     user = User.objects.create(username="user1")
     talk = _create_talk(owner=user, title="A talk")
+
+    with pytest.raises(ValueError):
+        GridMutation.resolve_update_talk(
+            None,
+            GraphQLInfo(user),
+            talk_id=talk.id,
+            title="A new title",
+            additional_speakers=[],
+            is_open_discussion=True,
+        )
+
+
+@pytest.mark.django_db
+def test_updating_a_talk_fails_once_it_has_ended():
+    _set_global_settings(EventState.GRID_OPEN)
+    user = User.objects.create(username="user1")
+    talk = _create_talk(owner=user, title="A talk")
+    talk.slot.session.start_time = datetime.now(tz=utc) - timedelta(hours=1)
+    talk.slot.session.end_time = datetime.now(tz=utc) - timedelta(minutes=30)
+    talk.slot.session.save()
 
     with pytest.raises(ValueError):
         GridMutation.resolve_update_talk(
@@ -109,6 +129,26 @@ def test_adding_a_talk_fails_unless_grid_is_open():
 
 
 @pytest.mark.django_db
+def test_adding_a_talk_fails_once_session_has_ended():
+    _set_global_settings(EventState.GRID_OPEN)
+    user = User.objects.create(username="user1")
+    slot = _create_slot()
+    slot.session.start_time = datetime.now(tz=utc) - timedelta(hours=1)
+    slot.session.end_time = datetime.now(tz=utc) - timedelta(minutes=30)
+    slot.session.save()
+
+    with pytest.raises(ValueError):
+        GridMutation.resolve_add_talk(
+            None,
+            GraphQLInfo(user),
+            slot_id=slot.id,
+            title="A new title",
+            additional_speakers=[],
+            is_open_discussion=True,
+        )
+
+
+@pytest.mark.django_db
 def test_adding_a_talk_succeeds_grid_is_open():
     _set_global_settings(EventState.GRID_OPEN)
     user = User.objects.create(username="user1")
@@ -154,6 +194,20 @@ def test_adding_a_talk_fails_when_slot_is_already_in_use():
 
 @pytest.mark.django_db
 def test_moving_a_talk_fails_unless_grid_is_open():
+    _set_global_settings(EventState.GRID_OPEN)
+    user = User.objects.create(username="user1")
+    talk = _create_talk(owner=user, title="A talk")
+    talk.slot.session.start_time = datetime.now(tz=utc) - timedelta(hours=1)
+    talk.slot.session.end_time = datetime.now(tz=utc) - timedelta(minutes=30)
+    talk.slot.session.save()
+    slot = _create_slot()
+
+    with pytest.raises(ValueError):
+        GridMutation.resolve_move_talk(None, GraphQLInfo(user), talk_id=talk.id, to_slot=slot.id)
+
+
+@pytest.mark.django_db
+def test_moving_a_talk_fails_once_session_has_started():
     _set_global_settings(EventState.DOORS_OPEN)
     user = User.objects.create(username="user1")
     talk = _create_talk(owner=user, title="A talk")
@@ -221,6 +275,23 @@ def test_removing_a_talk_fails_unless_user_owns_it():
     user = User.objects.create(username="user1")
     other_user = User.objects.create(username="user2")
     talk = _create_talk(owner=other_user, title="A talk")
+
+    with pytest.raises(ValueError):
+        GridMutation.resolve_remove_talk(
+            None,
+            GraphQLInfo(user),
+            slot_id=talk.slot.id,
+        )
+
+
+@pytest.mark.django_db
+def test_removing_a_talk_fails_once_session_has_ended():
+    _set_global_settings(EventState.GRID_OPEN)
+    user = User.objects.create(username="user1")
+    talk = _create_talk(owner=user, title="A talk")
+    talk.slot.session.start_time = datetime.now(tz=utc) - timedelta(hours=1)
+    talk.slot.session.end_time = datetime.now(tz=utc) - timedelta(minutes=30)
+    talk.slot.session.save()
 
     with pytest.raises(ValueError):
         GridMutation.resolve_remove_talk(

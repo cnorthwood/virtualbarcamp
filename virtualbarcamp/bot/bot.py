@@ -6,6 +6,7 @@ from discord import AllowedMentions
 
 from django.conf import settings
 from virtualbarcamp.discord import create_voice_channel, create_text_channel
+from virtualbarcamp.grid.models import Room
 from virtualbarcamp.home.models import GlobalSettings
 
 LOGGER = logging.getLogger(__name__)
@@ -39,10 +40,32 @@ class BarCampBot(discord.Client):
                 await message.channel.send(
                     "I couldn't recognise that room type. To create a breakout room, type `!breakout text/voice room name`."
                 )
+        elif message.content.startswith("Finishing:") and message.author == self.user:
+            room = await sync_to_async(
+                lambda: Room.objects.filter(
+                    discord_discussion_channel_id=message.channel.id
+                ).first()
+            )()
+            if room:
+                for channel in self.voice_channels:
+                    if channel.id == room.discord_presentation_channel_id:
+                        for member in channel.members:
+                            await member.move_to(None)
 
     async def on_member_join(self, member):
-        if settings.DISCORD_WELCOME_CHANNEL:
-            self.get_channel(settings.DISCORD_WELCOME_CHANNEL).send(
+        if settings.DISCORD_WELCOME_CHANNEL_ID:
+            self.get_channel(settings.DISCORD_WELCOME_CHANNEL_ID).send(
                 f"Welcome <@{member.id}>!",
                 allowed_mentions=AllowedMentions(users=[member.id]),
             )
+
+    async def on_voice_state_update(self, member, before, after):
+        if before.channel is not None and after.channel is None:
+            breakout_category_id = await sync_to_async(
+                lambda: GlobalSettings.objects.first().get_or_create_breakout_category_id()
+            )()
+            if (
+                before.channel.category_id == breakout_category_id
+                and len(before.channel.members) == 0
+            ):
+                await before.channel.delete(reason="Empty breakout room")

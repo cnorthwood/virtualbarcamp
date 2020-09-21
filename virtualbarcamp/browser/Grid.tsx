@@ -3,6 +3,7 @@ import { gql, useMutation, useQuery } from "@apollo/client";
 import { DragDropContext, Draggable, Droppable, DropResult } from "react-beautiful-dnd";
 import parseISO from "date-fns/parseISO";
 import format from "date-fns/format";
+import isPast from "date-fns/isPast";
 
 import { grid } from "./graphql/grid";
 import { slotChanged } from "./graphql/slotChanged";
@@ -271,7 +272,7 @@ const Grid: FunctionComponent = () => {
                 <th scope="row" className="grid__room">
                   {room.name}
                 </th>
-                {data!.grid.sessions.map(({ id, event, slots }) => {
+                {data!.grid.sessions.map(({ id, startTime, endTime, event, slots }) => {
                   if (event !== null || !slots) {
                     return i === 0 ? (
                       <td key={id} rowSpan={rooms.length} className="grid__event">
@@ -280,13 +281,20 @@ const Grid: FunctionComponent = () => {
                     ) : null;
                   }
 
+                  const slotHasStarted = isPast(parseISO(startTime));
+                  const slotHasEnded = isPast(parseISO(endTime));
+
                   const slot = slots.find((slot) => slot.room.id === room.id);
                   if (!slot) {
                     return <td key={id} />;
                   }
 
                   return (
-                    <Droppable key={id} droppableId={slot.id} isDropDisabled={slot.talk !== null}>
+                    <Droppable
+                      key={id}
+                      droppableId={slot.id}
+                      isDropDisabled={slot.talk !== null || slotHasEnded}
+                    >
                       {(provided, snapshot) => (
                         <td
                           ref={provided.innerRef}
@@ -296,7 +304,7 @@ const Grid: FunctionComponent = () => {
                           {slot.talk ? (
                             <Draggable
                               draggableId={slot.talk.id}
-                              isDragDisabled={!slot.talk.isMine}
+                              isDragDisabled={!slot.talk.isMine || slotHasStarted}
                               index={0}
                             >
                               {(provided, snapshot) => (
@@ -311,7 +319,7 @@ const Grid: FunctionComponent = () => {
                                     id={slot.talk!.id}
                                     slotId={slot.id}
                                     title={slot.talk!.title}
-                                    isMine={slot.talk!.isMine}
+                                    isEditable={slot.talk!.isMine && !slotHasEnded}
                                     isOpenDiscussion={slot.talk!.isOpenDiscussion}
                                     speakers={slot.talk!.speakers}
                                     availableSpeakers={

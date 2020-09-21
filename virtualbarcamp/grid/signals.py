@@ -1,9 +1,13 @@
+from datetime import datetime
+
 from django.conf import settings
-from django.db.models.signals import post_save, post_delete
+from django.db.models.signals import post_save, post_delete, pre_delete
 from graphene_subscriptions.signals import post_save_subscription, post_delete_subscription
+from pytz import utc
 
 from virtualbarcamp.discord import sync_channels, delete_channels
 from virtualbarcamp.grid.models import Talk, Room, Slot, Session
+from virtualbarcamp.grid.tasks import slot_starts, slot_ends
 
 
 def save_room(sender, instance: Room, **kwargs):
@@ -44,6 +48,20 @@ def save_session(sender, instance: Session, **kwargs):
         slot.save()
 
 
+def save_talk(sender, instance: Talk, **kwargs):
+    if instance.slot.session.start_time < datetime.now(
+        tz=utc
+    ) and instance.slot.session.end_time > datetime.now(tz=utc):
+        slot_starts.delay(instance.slot.id)
+
+
+def delete_talk(sender, instance: Talk, **kwargs):
+    if instance.slot.session.start_time < datetime.now(
+        tz=utc
+    ) and instance.slot.session.end_time > datetime.now(tz=utc):
+        slot_ends.delay(instance.slot.id)
+
+
 post_save.connect(save_room, sender=Room)
 post_delete.connect(delete_room, sender=Room)
 post_save.connect(post_save_subscription, sender=Talk, dispatch_uid="grid_update")
@@ -51,3 +69,5 @@ post_delete.connect(post_delete_subscription, sender=Talk, dispatch_uid="grid_ta
 post_save.connect(save_session, sender=Session)
 post_save.connect(save_slot, sender=Slot)
 post_delete.connect(delete_slot, sender=Slot)
+post_save.connect(save_talk, sender=Talk)
+pre_delete.connect(delete_talk, sender=Talk)

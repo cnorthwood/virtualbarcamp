@@ -57,7 +57,7 @@ const DoorsOpenLanding: FunctionComponent<{ gridOpenTime: string | null }> = ({ 
                 chat element. Voice chats can be limited to only the presenter (who put the card on
                 the Grid), but can optionally include co-presenters or be an open discussion, with
                 everyone able to speak. If you present slides (using Discord's go live feature), the
-                maximum capacity of your room will be 50 people.
+                maximum capacity of your room will be 25 people.
               </p>
             </div>
           </div>

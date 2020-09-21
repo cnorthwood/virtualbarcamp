@@ -84,6 +84,28 @@ resource "kubernetes_service" "virtualbarcamp" {
   }
 }
 
+locals {
+  app_config = {
+    "TLS_CERTIFICATE"             = "${acme_certificate.www_certificate.certificate_pem}${acme_certificate.www_certificate.issuer_pem}"
+    "TLS_PRIVATE_KEY"             = acme_certificate.www_certificate.private_key_pem
+    "SECRET_KEY"                  = random_string.django_secret.result
+    "APP_HOST"                    = var.app_hostname
+    "DB_HOST"                     = digitalocean_database_cluster.postgres.private_host
+    "DB_PORT"                     = digitalocean_database_cluster.postgres.port
+    "DB_USER"                     = digitalocean_database_user.db.name
+    "DB_PASSWORD"                 = digitalocean_database_user.db.password
+    "DB_NAME"                     = digitalocean_database_db.db.name
+    "DB_SSL_MODE"                 = "require"
+    "REDIS_URI"                   = "rediss://${digitalocean_database_cluster.queue.user}:${digitalocean_database_cluster.queue.password}@${digitalocean_database_cluster.queue.private_host}:${digitalocean_database_cluster.queue.port}"
+    "DISCORD_OAUTH_CLIENT_ID"     = var.discord_oauth_client_id
+    "DISCORD_OAUTH_CLIENT_SECRET" = var.discord_oauth_client_secret
+    "DISCORD_OAUTH_BOT_TOKEN"     = var.discord_oauth_bot_token
+    "DISCORD_GUILD_ID"            = var.discord_guild_id
+    "DISCORD_MODERATOR_ROLE_ID"   = var.discord_moderator_role_id
+    "DISCORD_WELCOME_CHANNEL_ID"  = var.discord_welcome_channel_id
+  }
+}
+
 resource "kubernetes_deployment" "virtualbarcamp_www" {
   metadata {
     name = "virtualbarcamp-www"
@@ -118,89 +140,13 @@ resource "kubernetes_deployment" "virtualbarcamp_www" {
           image = "registry.gitlab.com/cnorthwood/virtualbarcamp:${var.app_version}"
           args  = ["www"]
 
-          env {
-            name  = "TLS_CERTIFICATE"
-            value = "${acme_certificate.www_certificate.certificate_pem}${acme_certificate.www_certificate.issuer_pem}"
-          }
+          dynamic "env" {
+            for_each = local.app_config
 
-          env {
-            name  = "TLS_PRIVATE_KEY"
-            value = acme_certificate.www_certificate.private_key_pem
-          }
-
-          env {
-            name  = "SECRET_KEY"
-            value = random_string.django_secret.result
-          }
-
-          env {
-            name  = "APP_HOST"
-            value = var.app_hostname
-          }
-
-          env {
-            name  = "DB_HOST"
-            value = digitalocean_database_cluster.postgres.private_host
-          }
-
-          env {
-            name  = "DB_PORT"
-            value = digitalocean_database_cluster.postgres.port
-          }
-
-          env {
-            name  = "DB_USER"
-            value = digitalocean_database_user.db.name
-          }
-
-          env {
-            name  = "DB_PASSWORD"
-            value = digitalocean_database_user.db.password
-          }
-
-          env {
-            name  = "DB_NAME"
-            value = digitalocean_database_db.db.name
-          }
-
-          env {
-            name  = "DB_SSL_MODE"
-            value = "require"
-          }
-
-          env {
-            name  = "REDIS_URI"
-            value = "rediss://${digitalocean_database_cluster.queue.user}:${digitalocean_database_cluster.queue.password}@${digitalocean_database_cluster.queue.private_host}:${digitalocean_database_cluster.queue.port}"
-          }
-
-          env {
-            name  = "DISCORD_OAUTH_CLIENT_ID"
-            value = var.discord_oauth_client_id
-          }
-
-          env {
-            name  = "DISCORD_OAUTH_CLIENT_SECRET"
-            value = var.discord_oauth_client_secret
-          }
-
-          env {
-            name  = "DISCORD_OAUTH_BOT_TOKEN"
-            value = var.discord_oauth_bot_token
-          }
-
-          env {
-            name  = "DISCORD_GUILD_ID"
-            value = var.discord_guild_id
-          }
-
-          env {
-            name  = "DISCORD_MODERATOR_ROLE_ID"
-            value = var.discord_moderator_role_id
-          }
-
-          env {
-            name  = "DISCORD_WELCOME_CHANNEL_ID"
-            value = var.discord_welcome_channel_id
+            content {
+              name  = env.key
+              value = env.value
+            }
           }
         }
 
@@ -254,79 +200,13 @@ resource "kubernetes_deployment" "virtualbarcamp_worker" {
           image = "registry.gitlab.com/cnorthwood/virtualbarcamp:${var.app_version}"
           args  = ["worker"]
 
-          env {
-            name  = "SECRET_KEY"
-            value = random_string.django_secret.result
-          }
+          dynamic "env" {
+            for_each = local.app_config
 
-          env {
-            name  = "APP_HOST"
-            value = var.app_hostname
-          }
-
-          env {
-            name  = "DB_HOST"
-            value = digitalocean_database_cluster.postgres.private_host
-          }
-
-          env {
-            name  = "DB_PORT"
-            value = digitalocean_database_cluster.postgres.port
-          }
-
-          env {
-            name  = "DB_USER"
-            value = digitalocean_database_user.db.name
-          }
-
-          env {
-            name  = "DB_PASSWORD"
-            value = digitalocean_database_user.db.password
-          }
-
-          env {
-            name  = "DB_NAME"
-            value = digitalocean_database_db.db.name
-          }
-
-          env {
-            name  = "DB_SSL_MODE"
-            value = "require"
-          }
-
-          env {
-            name  = "REDIS_URI"
-            value = "rediss://${digitalocean_database_cluster.queue.user}:${digitalocean_database_cluster.queue.password}@${digitalocean_database_cluster.queue.private_host}:${digitalocean_database_cluster.queue.port}"
-          }
-
-          env {
-            name  = "DISCORD_OAUTH_CLIENT_ID"
-            value = var.discord_oauth_client_id
-          }
-
-          env {
-            name  = "DISCORD_OAUTH_CLIENT_SECRET"
-            value = var.discord_oauth_client_secret
-          }
-
-          env {
-            name  = "DISCORD_OAUTH_BOT_TOKEN"
-            value = var.discord_oauth_bot_token
-          }
-
-          env {
-            name  = "DISCORD_GUILD_ID"
-            value = var.discord_guild_id
-          }
-
-          env {
-            name  = "DISCORD_MODERATOR_ROLE_ID"
-            value = var.discord_moderator_role_id
-          }
-
-          env {
-            name  = "DISCORD_WELCOME_CHANNEL_ID"
-            value = var.discord_welcome_channel_id
+            content {
+              name  = env.key
+              value = env.value
+            }
           }
         }
 
@@ -380,79 +260,13 @@ resource "kubernetes_deployment" "virtualbarcamp_beat" {
           image = "registry.gitlab.com/cnorthwood/virtualbarcamp:${var.app_version}"
           args  = ["beat"]
 
-          env {
-            name  = "SECRET_KEY"
-            value = random_string.django_secret.result
-          }
+          dynamic "env" {
+            for_each = local.app_config
 
-          env {
-            name  = "APP_HOST"
-            value = var.app_hostname
-          }
-
-          env {
-            name  = "DB_HOST"
-            value = digitalocean_database_cluster.postgres.private_host
-          }
-
-          env {
-            name  = "DB_PORT"
-            value = digitalocean_database_cluster.postgres.port
-          }
-
-          env {
-            name  = "DB_USER"
-            value = digitalocean_database_user.db.name
-          }
-
-          env {
-            name  = "DB_PASSWORD"
-            value = digitalocean_database_user.db.password
-          }
-
-          env {
-            name  = "DB_NAME"
-            value = digitalocean_database_db.db.name
-          }
-
-          env {
-            name  = "DB_SSL_MODE"
-            value = "require"
-          }
-
-          env {
-            name  = "REDIS_URI"
-            value = "rediss://${digitalocean_database_cluster.queue.user}:${digitalocean_database_cluster.queue.password}@${digitalocean_database_cluster.queue.private_host}:${digitalocean_database_cluster.queue.port}"
-          }
-
-          env {
-            name  = "DISCORD_OAUTH_CLIENT_ID"
-            value = var.discord_oauth_client_id
-          }
-
-          env {
-            name  = "DISCORD_OAUTH_CLIENT_SECRET"
-            value = var.discord_oauth_client_secret
-          }
-
-          env {
-            name  = "DISCORD_OAUTH_BOT_TOKEN"
-            value = var.discord_oauth_bot_token
-          }
-
-          env {
-            name  = "DISCORD_GUILD_ID"
-            value = var.discord_guild_id
-          }
-
-          env {
-            name  = "DISCORD_MODERATOR_ROLE_ID"
-            value = var.discord_moderator_role_id
-          }
-
-          env {
-            name  = "DISCORD_WELCOME_CHANNEL_ID"
-            value = var.discord_welcome_channel_id
+            content {
+              name  = env.key
+              value = env.value
+            }
           }
         }
 
@@ -506,79 +320,13 @@ resource "kubernetes_deployment" "virtualbarcamp_bot" {
           image = "registry.gitlab.com/cnorthwood/virtualbarcamp:${var.app_version}"
           args  = ["bot"]
 
-          env {
-            name  = "SECRET_KEY"
-            value = random_string.django_secret.result
-          }
+          dynamic "env" {
+            for_each = local.app_config
 
-          env {
-            name  = "APP_HOST"
-            value = var.app_hostname
-          }
-
-          env {
-            name  = "DB_HOST"
-            value = digitalocean_database_cluster.postgres.private_host
-          }
-
-          env {
-            name  = "DB_PORT"
-            value = digitalocean_database_cluster.postgres.port
-          }
-
-          env {
-            name  = "DB_USER"
-            value = digitalocean_database_user.db.name
-          }
-
-          env {
-            name  = "DB_PASSWORD"
-            value = digitalocean_database_user.db.password
-          }
-
-          env {
-            name  = "DB_NAME"
-            value = digitalocean_database_db.db.name
-          }
-
-          env {
-            name  = "DB_SSL_MODE"
-            value = "require"
-          }
-
-          env {
-            name  = "REDIS_URI"
-            value = "rediss://${digitalocean_database_cluster.queue.user}:${digitalocean_database_cluster.queue.password}@${digitalocean_database_cluster.queue.private_host}:${digitalocean_database_cluster.queue.port}"
-          }
-
-          env {
-            name  = "DISCORD_OAUTH_CLIENT_ID"
-            value = var.discord_oauth_client_id
-          }
-
-          env {
-            name  = "DISCORD_OAUTH_CLIENT_SECRET"
-            value = var.discord_oauth_client_secret
-          }
-
-          env {
-            name  = "DISCORD_OAUTH_BOT_TOKEN"
-            value = var.discord_oauth_bot_token
-          }
-
-          env {
-            name  = "DISCORD_GUILD_ID"
-            value = var.discord_guild_id
-          }
-
-          env {
-            name  = "DISCORD_MODERATOR_ROLE_ID"
-            value = var.discord_moderator_role_id
-          }
-
-          env {
-            name  = "DISCORD_WELCOME_CHANNEL_ID"
-            value = var.discord_welcome_channel_id
+            content {
+              name  = env.key
+              value = env.value
+            }
           }
         }
 

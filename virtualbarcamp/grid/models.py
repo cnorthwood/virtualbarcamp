@@ -47,6 +47,8 @@ class Slot(Model):
     )
 
     def sync_scheduled_action_timings(self):
+        # TODO: presenter grace period
+
         if not self.slot_start_scheduled_action:
             self.slot_start_scheduled_action = PeriodicTask.objects.create(
                 name=f"Start {str(self)}",
@@ -55,6 +57,8 @@ class Slot(Model):
                 args=[self.id],
                 one_off=True,
             )
+            self.slot_start_scheduled_action.save()
+            self.slot_start_scheduled_action.clocked.save()
         else:
             self.slot_start_scheduled_action.name = f"Start {str(self)}"
             self.slot_start_scheduled_action.save()
@@ -69,6 +73,8 @@ class Slot(Model):
                 args=[self.id],
                 one_off=True,
             )
+            self.slot_end_scheduled_action.save()
+            self.slot_end_scheduled_action.clocked.save()
         else:
             self.slot_end_scheduled_action.name = f"End {str(self)}"
             self.slot_end_scheduled_action.save()

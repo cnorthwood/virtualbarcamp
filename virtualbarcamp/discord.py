@@ -1,6 +1,5 @@
 import logging
 
-from celery import shared_task
 from django.conf import settings
 from django.contrib.auth import logout
 from django.contrib.auth.models import User
@@ -90,6 +89,7 @@ def create_text_channel(name: str, parent_id: str):
 def presenter_only_permissions(presenter_role_id: str):
     STREAM_PERMISSION = 0x00000200
     SPEAK_PERMISSION = 0x00200000
+    CONNECT_PERMISSION = 0x00100000
     everyone_role_id = settings.DISCORD_GUILD_ID
     moderator_role_id = settings.DISCORD_MODERATOR_ROLE_ID
 
@@ -97,19 +97,28 @@ def presenter_only_permissions(presenter_role_id: str):
         {
             "id": everyone_role_id,
             "type": "role",
-            "deny": STREAM_PERMISSION | SPEAK_PERMISSION,
+            "deny": CONNECT_PERMISSION | STREAM_PERMISSION | SPEAK_PERMISSION,
         },
         {
             "id": moderator_role_id,
             "type": "role",
-            "allow": STREAM_PERMISSION | SPEAK_PERMISSION,
+            "allow": CONNECT_PERMISSION | STREAM_PERMISSION | SPEAK_PERMISSION,
         },
         {
             "id": presenter_role_id,
             "type": "role",
-            "allow": STREAM_PERMISSION | SPEAK_PERMISSION,
+            "allow": CONNECT_PERMISSION | STREAM_PERMISSION | SPEAK_PERMISSION,
         },
     ]
+
+
+def max_voice_bitrate():
+    response = requests.get(
+        f"https://discord.com/api/guilds/{settings.DISCORD_GUILD_ID}",
+        headers={"authorization": f"Bot {settings.DISCORD_BOT_TOKEN}"},
+    )
+    response.raise_for_status()
+    return [96e3, 128e3, 256e3, 384e3][response.json()["premium_tier"]]
 
 
 def create_voice_channel(name: str, parent: str, presenter_role_id: (str, None) = None):
@@ -120,6 +129,7 @@ def create_voice_channel(name: str, parent: str, presenter_role_id: (str, None) 
             "name": name,
             "type": 2,
             "parent_id": parent,
+            "bitrate": max_voice_bitrate(),
             "permission_overwrites": []
             if presenter_role_id is None
             else presenter_only_permissions(presenter_role_id),
@@ -259,6 +269,15 @@ def remove_role_from_user(role_id: str, user_id: str):
     response.raise_for_status()
 
 
+def send_message(channel_id: str, message: str):
+    response = requests.post(
+        f"https://discord.com/api/channels/{channel_id}/messages",
+        headers={"authorization": f"Bot {settings.DISCORD_BOT_TOKEN}"},
+        json={"content": message},
+    )
+    response.raise_for_status()
+
+
 def start_slot(slot: Slot):
     try:
         if slot.talk.open_discussion:
@@ -267,6 +286,7 @@ def start_slot(slot: Slot):
             add_role_to_user(slot.room.discord_presenter_role_id, slot.talk.owner)
             for speaker in slot.talk.other_speakers.all():
                 add_role_to_user(slot.room.discord_presenter_role_id, speaker)
+        send_message(slot.room.discord_discussion_channel_id, f"Starting now! {slot.talk.title}")
     except Slot.talk.RelatedObjectDoesNotExist:
         pass
 
@@ -277,3 +297,10 @@ def end_slot(slot: Slot):
     limit_channel_to_presenters(
         slot.room.discord_presentation_channel_id, slot.room.discord_presenter_role_id
     )
+    try:
+        send_message(
+            slot.room.discord_discussion_channel_id,
+            f"Finishing: {slot.talk.title}\nCheck what's next at https://online.barcampmanchester.co.uk",
+        )
+    except Slot.talk.RelatedObjectDoesNotExist:
+        pass

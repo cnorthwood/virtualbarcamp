@@ -58,11 +58,11 @@ const Talk: FunctionComponent<{
   id: string;
   slotId: string;
   title: string;
-  isMine: boolean;
+  isEditable: boolean;
   isOpenDiscussion: boolean;
   speakers: { id: string; name: string }[];
   availableSpeakers: { id: string; name: string }[];
-}> = ({ id, slotId, isMine, title, isOpenDiscussion, speakers, availableSpeakers }) => {
+}> = ({ id, slotId, isEditable, title, isOpenDiscussion, speakers, availableSpeakers }) => {
   const [updateWindowOpened, setUpdateWindowOpened] = useState<boolean>(false);
 
   const closeUpdateWindow = useCallback(
@@ -173,7 +173,7 @@ const Talk: FunctionComponent<{
   return (
     <div className="talk">
       <h3 className="title is-size-4">{title}</h3>
-      {isMine ? (
+      {isEditable ? (
         <>
           <div className={`modal ${updateWindowOpened ? "is-active" : ""}`}>
             <div className="modal-background" />
