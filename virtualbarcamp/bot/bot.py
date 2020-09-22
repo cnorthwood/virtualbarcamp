@@ -31,7 +31,7 @@ class BarCampBot(discord.Client):
                 lambda: GlobalSettings.objects.first().get_or_create_breakout_category_id()
             )()
             if room_type == "voice":
-                channel_id = create_voice_channel(name, breakout_category_id)
+                channel_id = create_voice_channel(name, breakout_category_id, is_open=True)
                 await message.channel.send(f"Created! You can now head over to <#{channel_id}>.")
             elif room_type == "text":
                 channel_id = create_text_channel(name, breakout_category_id)

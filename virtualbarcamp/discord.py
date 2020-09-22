@@ -111,6 +111,17 @@ def presenter_only_permissions(presenter_role_id: str):
     ]
 
 
+def closed_channel_permissions():
+    everyone_role_id = settings.DISCORD_GUILD_ID
+    moderator_role_id = settings.DISCORD_MODERATOR_ROLE_ID
+    CONNECT_PERMISSION = 0x00100000
+
+    return [
+        {"id": everyone_role_id, "type": "role", "deny": CONNECT_PERMISSION},
+        {"id": moderator_role_id, "type": "role", "allow": CONNECT_PERMISSION},
+    ]
+
+
 def max_voice_bitrate():
     response = requests.get(
         f"https://discord.com/api/guilds/{settings.DISCORD_GUILD_ID}",
@@ -120,7 +131,7 @@ def max_voice_bitrate():
     return [96e3, 128e3, 256e3, 384e3][response.json()["premium_tier"]]
 
 
-def create_voice_channel(name: str, parent: str, presenter_role_id: (str, None) = None):
+def create_voice_channel(name: str, parent: str, is_open: bool):
     response = requests.post(
         f"https://discord.com/api/guilds/{settings.DISCORD_GUILD_ID}/channels",
         headers={"authorization": f"Bot {settings.DISCORD_BOT_TOKEN}"},
@@ -130,8 +141,8 @@ def create_voice_channel(name: str, parent: str, presenter_role_id: (str, None) 
             "parent_id": parent,
             "bitrate": max_voice_bitrate(),
             "permission_overwrites": []
-            if presenter_role_id is None
-            else presenter_only_permissions(presenter_role_id),
+            if is_open is None
+            else closed_channel_permissions(),
         },
     )
     response.raise_for_status()
@@ -196,7 +207,7 @@ def sync_channels(room: Room):
 
     if not room.discord_presentation_channel_id:
         room.discord_presentation_channel_id = create_voice_channel(
-            room.room_name, room.discord_category_id, room.discord_presenter_role_id
+            room.room_name, room.discord_category_id, is_open=False
         )
     else:
         update_channel_name(room.discord_presentation_channel_id, room.room_name)
@@ -239,17 +250,11 @@ def limit_channel_to_presenters(channel_id: str, presenter_role_id: str):
 
 
 def close_channel(channel_id: str):
-    CONNECT_PERMISSION = 0x00100000
-    everyone_role_id = settings.DISCORD_GUILD_ID
-    moderator_role_id = settings.DISCORD_MODERATOR_ROLE_ID
     response = requests.patch(
         f"https://discord.com/api/channels/{channel_id}",
         headers={"authorization": f"Bot {settings.DISCORD_BOT_TOKEN}"},
         json={
-            "permission_overwrites": [
-                {"id": everyone_role_id, "type": "role", "deny": CONNECT_PERMISSION},
-                {"id": moderator_role_id, "type": "role", "allow": CONNECT_PERMISSION},
-            ]
+            "permission_overwrites": closed_channel_permissions()
         },
     )
     response.raise_for_status()
