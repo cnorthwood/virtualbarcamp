@@ -140,9 +140,7 @@ def create_voice_channel(name: str, parent: str, is_open: bool):
             "type": 2,
             "parent_id": parent,
             "bitrate": max_voice_bitrate(),
-            "permission_overwrites": []
-            if is_open is None
-            else closed_channel_permissions(),
+            "permission_overwrites": [] if is_open is None else closed_channel_permissions(),
         },
     )
     response.raise_for_status()
@@ -253,9 +251,7 @@ def close_channel(channel_id: str):
     response = requests.patch(
         f"https://discord.com/api/channels/{channel_id}",
         headers={"authorization": f"Bot {settings.DISCORD_BOT_TOKEN}"},
-        json={
-            "permission_overwrites": closed_channel_permissions()
-        },
+        json={"permission_overwrites": closed_channel_permissions()},
     )
     response.raise_for_status()
 
