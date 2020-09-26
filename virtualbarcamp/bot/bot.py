@@ -2,11 +2,9 @@ import logging
 
 import discord
 from asgiref.sync import sync_to_async
-from discord import AllowedMentions, Message, Member
+from discord import Message
 
-from django.conf import settings
 from virtualbarcamp.discord import create_voice_channel, create_text_channel
-from virtualbarcamp.grid.models import Room
 from virtualbarcamp.home.models import GlobalSettings
 
 LOGGER = logging.getLogger(__name__)
@@ -40,21 +38,3 @@ class BarCampBot(discord.Client):
                 await message.channel.send(
                     "I couldn't recognise that room type. To create a breakout room, type `!breakout text/voice room name`."
                 )
-        elif message.content.startswith("Finishing:") and message.author == self.user:
-            room = await sync_to_async(
-                lambda: Room.objects.filter(
-                    discord_discussion_channel_id=message.channel.id
-                ).first()
-            )()
-            if room:
-                for channel in message.guild.voice_channels:
-                    if channel.id == room.discord_presentation_channel_id:
-                        for member in channel.members:
-                            await member.move_to(None)
-
-    async def on_member_join(self, member: Member):
-        if settings.DISCORD_WELCOME_CHANNEL_ID:
-            self.get_channel(settings.DISCORD_WELCOME_CHANNEL_ID).send(
-                f"Welcome <@{member.id}>!",
-                allowed_mentions=AllowedMentions(users=[member.id]),
-            )
