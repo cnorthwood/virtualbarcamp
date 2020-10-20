@@ -50,7 +50,7 @@
     "webpack-bundle-tracker": "^1.0.0-alpha.1",
     "webpack-cli": "^3.3.11",
     "webpack-dev-server": "^3.10.3",
-    "webpack-subresource-integrity": "^1.4.0"
+    "webpack-subresource-integrity": "^1.5.1"
   },
   "scripts": {
     "build": "NODE_ENV=production webpack",
