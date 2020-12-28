@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useState } from "react";
+import React, { FunctionComponent, useCallback, useState } from "react";
 import { gql, useQuery } from "@apollo/client";
 
 import { isOnDiscord } from "./graphql/isOnDiscord";
@@ -12,6 +12,10 @@ export const IS_ON_DISCORD_QUERY = gql`
 
 const DiscordInviteModal: FunctionComponent = () => {
   const [modalClosed, setModalClosed] = useState<boolean>(false);
+  const closeModal = useCallback(() => {
+    setModalClosed(true);
+  }, []);
+
   const { data } = useQuery<isOnDiscord>(IS_ON_DISCORD_QUERY);
 
   return (
@@ -20,9 +24,9 @@ const DiscordInviteModal: FunctionComponent = () => {
       <div className="modal-content">
         <div className="box content">
           <p>
-            BarCamp Manchester 10 is taking place using Discord. Join our Discord server now to meet
-            your fellow attendees in the lobby, and if you're presenting, you can find a test room
-            to check your technology in (using Discord's Go Live function). You can also form a
+            Winter BarCamp is taking place using Discord. Join our Discord server now to meet your
+            fellow attendees in the lobby, and if you're presenting, you can find a test room to
+            check your technology in (using Discord's Go Live function). You can also form a
             breakout room for discussions by saying <code>!breakout My Topic</code> in the lobby
             (changing "My Topic" to the name of the breakout topic) to create a new breakout room
             for smaller discussions.
@@ -41,13 +45,7 @@ const DiscordInviteModal: FunctionComponent = () => {
           </p>
         </div>
       </div>
-      <button
-        className="modal-close is-large"
-        aria-label="close"
-        onClick={() => {
-          setModalClosed(true);
-        }}
-      />
+      <button className="modal-close is-large" aria-label="close" onClick={closeModal} />
     </div>
   );
 };

@@ -42,7 +42,7 @@ module.exports = {
         test: /\.css$/,
         use: [
           process.env.NODE_ENV !== "production" ? "style-loader" : MiniCssExtractPlugin.loader,
-          "css-loader",
+          { loader: "css-loader", options: { sourceMap: process.env.NODE_ENV !== "production" } },
         ],
       },
       {

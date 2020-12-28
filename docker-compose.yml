@@ -17,15 +17,15 @@ services:
       POSTGRES_PASSWORD: virtualbarcamp
 
   redis:
-    image: redis:5
+    image: redis:6
     restart: unless-stopped
 
   test-redis:
-    image: redis:5
+    image: redis:6
     restart: unless-stopped
 
   ui:
-    image: node:12
+    image: node:14
     restart: unless-stopped
     ports:
       - "3000:3000"

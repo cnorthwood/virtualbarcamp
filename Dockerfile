@@ -1,4 +1,4 @@
-FROM fedora:32 as dev-base
+FROM fedora:33 as dev-base
 
 RUN dnf upgrade -y && \
         dnf install -y poetry python3 python3-pip python3-devel python3-setuptools file gcc gcc-c++ make automake autoconf libtool openssl-devel pcre-devel git
@@ -12,7 +12,7 @@ RUN curl -Lo watchman.tar.gz https://github.com/facebook/watchman/archive/v4.9.0
         make && \
         make install
 
-FROM fedora:32 AS builder
+FROM fedora:33 AS builder
 
 RUN dnf install -y 'dnf-command(config-manager)'
 RUN dnf config-manager --add-repo https://dl.yarnpkg.com/rpm/yarn.repo
@@ -23,7 +23,7 @@ RUN yarn
 RUN yarn build
 RUN poetry export -f requirements.txt -o /app/requirements.txt --without-hashes
 
-FROM fedora:32
+FROM fedora:33
 
 RUN dnf upgrade -y && \
         dnf install -y nginx python3-pip gcc python3-devel git

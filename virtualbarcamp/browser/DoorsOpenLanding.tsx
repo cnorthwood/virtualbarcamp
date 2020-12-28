@@ -15,7 +15,7 @@ const DoorsOpenLanding: FunctionComponent<{ gridOpenTime: string | null }> = ({ 
           <div className="container">
             <div className="columns is-centered">
               <div className="column is-two-thirds">
-                <h2 className="title">Welcome to BarCamp Manchester 10!</h2>
+                <h2 className="title">Welcome to Winter BarCamp!</h2>
                 <p className="subtitle">
                   {gridOpenTime !== null ? (
                     <>
@@ -33,9 +33,9 @@ const DoorsOpenLanding: FunctionComponent<{ gridOpenTime: string | null }> = ({ 
           <div className="columns is-centered">
             <div className="column is-two-thirds content">
               <p>
-                BarCamp Manchester 10 is taking place using Discord. Join our Discord server now to
-                meet your fellow attendees in the lobby, and if you're presenting, you can find a
-                test room to check your technology in (using Discord's Go Live function).
+                Winter BarCamp is taking place using Discord. Join our Discord server now to meet
+                your fellow attendees in the lobby, and if you're presenting, you can find a test
+                room to check your technology in (using Discord's Go Live function).
               </p>
               <p className="has-text-centered">
                 {data?.isOnDiscord ? (

@@ -1,7 +1,7 @@
 resource "digitalocean_database_cluster" "queue" {
   name                 = "virtualbarcampqueue"
   engine               = "redis"
-  version              = "5"
+  version              = "6"
   size                 = "db-s-1vcpu-1gb"
   region               = digitalocean_vpc.vpc.region
   node_count           = 1
