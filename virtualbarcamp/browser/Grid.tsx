@@ -4,6 +4,7 @@ import { DragDropContext, Draggable, Droppable, DropResult } from "react-beautif
 import parseISO from "date-fns/parseISO";
 import format from "date-fns/format";
 import isPast from "date-fns/isPast";
+import isWithinInterval from "date-fns/isWithinInterval";
 
 import { grid } from "./graphql/grid";
 import { slotChanged } from "./graphql/slotChanged";
@@ -116,6 +117,9 @@ const MOVE_TALK_MUTATION = gql`
     }
   }
 `;
+
+const isNow = (start: string, end: string) =>
+  isWithinInterval(new Date(), { start: parseISO(start), end: parseISO(end) });
 
 const fallbackAvailableSpeakers: { id: string; name: string }[] = [];
 
@@ -256,7 +260,11 @@ const Grid: FunctionComponent = () => {
             <tr>
               <th />
               {data.grid.sessions.map(({ id, name, event, startTime, endTime }) => (
-                <th key={id} scope="col" className="grid__session">
+                <th
+                  key={id}
+                  scope="col"
+                  className={`grid__session ${isNow(startTime, endTime) ? "in-progress" : ""}`}
+                >
                   <p>{event ? "" : name}</p>
                   <p className="has-text-weight-light">
                     {format(parseISO(startTime), "p")}
@@ -275,7 +283,11 @@ const Grid: FunctionComponent = () => {
                 {data!.grid.sessions.map(({ id, startTime, endTime, event, slots }) => {
                   if (event !== null || !slots) {
                     return i === 0 ? (
-                      <td key={id} rowSpan={rooms.length} className="grid__event">
+                      <td
+                        key={id}
+                        rowSpan={rooms.length}
+                        className={`grid__event ${isNow(startTime, endTime) ? "in-progress" : ""}`}
+                      >
                         <span className="grid__event-name">{event}</span>
                       </td>
                     ) : null;
@@ -299,7 +311,7 @@ const Grid: FunctionComponent = () => {
                         <td
                           ref={provided.innerRef}
                           {...provided.droppableProps}
-                          className="grid__slot"
+                          className={`grid__slot ${isNow(startTime, endTime) ? "in-progress" : ""}`}
                         >
                           {slot.talk ? (
                             <Draggable
