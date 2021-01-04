@@ -62,7 +62,7 @@ Now, you can start a local dev environment:
  * For the live environment:<br>
    `doctl kubernetes cluster kubeconfig save virtualbarcamp` (to log in to the cluster)<br>
    `kubectl get pod` and find the name of the pod starting `virtualbarcamp-www`<br>
-   `kubectl exec -it virtualbarcamp-www-<pod-full-name> ./manage.py shell`
+   `kubectl exec -it virtualbarcamp-www-<pod-full-name> -- ./manage.py shell`
 3. Run this, varying your username appropriately:
    ```python
    from django.contrib.auth.models import User
@@ -73,8 +73,6 @@ Now, you can start a local dev environment:
    ```
 4. You will now have access to http://localhost:8000/admin/. You can use the
    admin screen to give other people staff/superuser access to the admin.
-
-For live, obtain a shell like so:
 
 ### Architectural Overview
 
@@ -120,7 +118,7 @@ be started with multiple invocations to take on the key roles.
 8. If you have any migrations you need to apply, then you can run these like so:<br>
    `doctl kubernetes cluster kubeconfig save virtualbarcamp` (to log in to the cluster)<br>
    `kubectl get pod` and find the name of the pod starting `virtualbarcamp-www`<br>
-   `kubectl exec virtualbarcamp-www-<pod-full-name> /app/init.sh migrate`
+   `kubectl exec virtualbarcamp-www-<pod-full-name> -- /app/init.sh migrate`
 
 If you need to scale, you can do so by overriding the default number of
 workers, or default node size like so:

@@ -156,14 +156,6 @@ resource "kubernetes_deployment" "virtualbarcamp_www" {
   }
 
   wait_for_rollout = false
-
-  lifecycle {
-    ignore_changes = [
-      spec[0].template[0].spec[0].active_deadline_seconds,
-      spec[0].template[0].spec[0].automount_service_account_token,
-      spec[0].template[0].spec[0].container[0].command,
-    ]
-  }
 }
 
 resource "kubernetes_deployment" "virtualbarcamp_worker" {
@@ -216,14 +208,6 @@ resource "kubernetes_deployment" "virtualbarcamp_worker" {
   }
 
   wait_for_rollout = false
-
-  lifecycle {
-    ignore_changes = [
-      spec[0].template[0].spec[0].active_deadline_seconds,
-      spec[0].template[0].spec[0].automount_service_account_token,
-      spec[0].template[0].spec[0].container[0].command,
-    ]
-  }
 }
 
 resource "kubernetes_deployment" "virtualbarcamp_beat" {
@@ -276,14 +260,6 @@ resource "kubernetes_deployment" "virtualbarcamp_beat" {
   }
 
   wait_for_rollout = false
-
-  lifecycle {
-    ignore_changes = [
-      spec[0].template[0].spec[0].active_deadline_seconds,
-      spec[0].template[0].spec[0].automount_service_account_token,
-      spec[0].template[0].spec[0].container[0].command,
-    ]
-  }
 }
 
 resource "kubernetes_deployment" "virtualbarcamp_bot" {
@@ -336,12 +312,4 @@ resource "kubernetes_deployment" "virtualbarcamp_bot" {
   }
 
   wait_for_rollout = false
-
-  lifecycle {
-    ignore_changes = [
-      spec[0].template[0].spec[0].active_deadline_seconds,
-      spec[0].template[0].spec[0].automount_service_account_token,
-      spec[0].template[0].spec[0].container[0].command,
-    ]
-  }
 }

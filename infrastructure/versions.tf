@@ -4,7 +4,7 @@ terraform {
       source = "digitalocean/digitalocean"
     }
     acme = {
-      source = "terraform-providers/acme"
+      source = "vancluever/acme"
     }
     kubernetes = {
       source = "hashicorp/kubernetes"
